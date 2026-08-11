@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Membership of Young Teachers Alliance (YTA) District Kashmore</title>
+    <title>Young Teachers Alliance (YTA) District Kashmore</title>
     
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,10 +12,14 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #eef2f5; margin: 0; padding: 20px 10px; }
         
-        .card { max-width: 450px; background: #ffffff; padding: 25px; border-radius: 12px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        h2 { text-align: center; color: #1e3a8a; margin: 0 0 8px 0; font-size: 18px; font-weight: 700; line-height: 1.3; }
+        /* Containers */
+        .card { max-width: 500px; background: #ffffff; padding: 25px; border-radius: 12px; margin: 0 auto 25px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .dashboard-card { max-width: 1100px; }
+        
+        h2 { text-align: center; color: #1e3a8a; margin: 0 0 8px 0; font-size: 20px; font-weight: 700; line-height: 1.3; }
         p.subtitle { text-align: center; color: #475569; font-size: 12px; line-height: 1.4; margin-bottom: 20px; }
         
+        /* Inputs & Labels */
         .form-group { margin-bottom: 12px; }
         label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px; }
         input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background-color: #fff; }
@@ -25,15 +29,51 @@
         .btn-submit { width: 100%; padding: 11px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .btn-submit:hover { background-color: #1d4ed8; }
         .btn-submit:disabled { background-color: #94a3b8; cursor: not-allowed; }
-        
         #statusMessage { margin-top: 12px; text-align: center; font-weight: bold; font-size: 13px; }
+
+        /* Dashboard Styles */
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .user-info { font-size: 13px; color: #334155; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-weight: 600; }
+        .role-badge { background-color: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
+        .role-owner { background-color: #7c3aed; }
+        
+        .stats-summary { display: flex; gap: 10px; }
+        .stat-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #334155; }
+        .stat-card span { color: #2563eb; font-weight: bold; }
+        
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .controls input { flex: 1; min-width: 200px; }
+        
+        .table-responsive { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        th { background-color: #1e293b; color: #ffffff; font-weight: 600; white-space: nowrap; }
+        tr:hover { background-color: #f8fafc; }
+        
+        .member-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
+        .badge-pending { background-color: #fef08a; color: #854d0e; }
+        .badge-approved { background-color: #bbf7d0; color: #166534; }
+        .badge-rejected { background-color: #fecaca; color: #991b1b; }
+        
+        .btn-action { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
+        .btn-approve { background-color: #16a34a; color: white; }
+        .btn-reject { background-color: #dc2626; color: white; }
+        .btn-remove { background-color: #e11d48; color: white; }
+        
+        .owner-section { background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .owner-section h3 { margin: 0 0 5px 0; color: #4c1d95; font-size: 16px; }
+        .admin-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
+        .admin-form input { flex: 1; min-width: 150px; }
+        
         .footer-credit { text-align: center; margin-top: 18px; font-size: 11px; color: #64748b; font-weight: 600; border-top: 1px solid #cbd5e1; padding-top: 12px; }
+        .hidden { display: none !important; }
     </style>
 </head>
 <body>
 
-<!-- ONLY 1 SINGLE MEMBERSHIP FORM SECTION -->
-<div class="card">
+<!-- SECTION 1: MEMBERSHIP REGISTRATION FORM -->
+<div class="card" id="formSection">
     <h2>Digital Membership of Young Teachers Alliance (YTA) District Kashmore</h2>
     <p class="subtitle">Please enter accurate information to register your membership.</p>
     
@@ -100,207 +140,7 @@
     <div class="footer-credit">Created by Nasar Bazed Dahani</div>
 </div>
 
-<script>
-    const SUPABASE_URL = 'https://iqwauodmugcbxlmdvqas.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_rx8GDyrYmlMKlB4iB8Teug_FiB7iGNM';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const form = document.getElementById('membershipForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusMessage = document.getElementById('statusMessage');
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'Submitting...';
-        statusMessage.innerText = '';
-
-        const photoFile = document.getElementById('photo').files[0];
-        let photoUrl = '';
-
-        try {
-            if (photoFile) {
-                const fileExt = photoFile.name.split('.').pop();
-                const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
-                const filePath = `member_photos/${fileName}`;
-
-                const { data: uploadData, error: uploadError } = await supabaseClient
-                    .storage
-                    .from('member-photos')
-                    .upload(filePath, photoFile);
-
-                if (!uploadError) {
-                    const { data: publicUrlData } = supabaseClient
-                        .storage
-                        .from('member-photos')
-                        .getPublicUrl(filePath);
-                    
-                    photoUrl = publicUrlData.publicUrl;
-                }
-            }
-
-            const formData = {
-                full_name: document.getElementById('full_name').value,
-                father_name: document.getElementById('father_name').value,
-                caste: document.getElementById('caste').value,
-                cnic: document.getElementById('cnic').value,
-                mobile: document.getElementById('mobile').value,
-                taluka: document.getElementById('taluka').value,
-                school_name: document.getElementById('school_name').value,
-                semis_code: document.getElementById('semis_code').value,
-                designation: document.getElementById('designation').value,
-                photo_url: photoUrl,
-                status: 'pending'
-            };
-
-            const { data, error } = await supabaseClient
-                .from('YTA District Kashmore Members')
-                .insert([formData]);
-
-            if (error) {
-                statusMessage.style.color = '#dc2626';
-                statusMessage.innerText = 'Error: ' + error.message;
-            } else {
-                statusMessage.style.color = '#16a34a';
-                statusMessage.innerText = 'Application successfully submitted!';
-                form.reset();
-            }
-        } catch (err) {
-            statusMessage.style.color = '#dc2626';
-            statusMessage.innerText = 'An error occurred during submission.';
-        }
-
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Registration';
-    });
-</script>
-
-</body>
-</html>
-        .user-info { font-size: 13px; color: #334155; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-weight: 600; }
-        .role-badge { background-color: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
-        .role-owner { background-color: #7c3aed; }
-        
-        .stats-summary { display: flex; gap: 10px; }
-        .stat-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #334155; }
-        .stat-card span { color: #2563eb; font-weight: bold; }
-        
-        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .controls input { flex: 1; min-width: 200px; }
-        
-        .table-responsive { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-        th { background-color: #1e293b; color: #ffffff; font-weight: 600; white-space: nowrap; }
-        tr:hover { background-color: #f8fafc; }
-        
-        .member-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
-        .badge-pending { background-color: #fef08a; color: #854d0e; }
-        .badge-approved { background-color: #bbf7d0; color: #166534; }
-        .badge-rejected { background-color: #fecaca; color: #991b1b; }
-        
-        .btn-action { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
-        .btn-approve { background-color: #16a34a; color: white; }
-        .btn-reject { background-color: #dc2626; color: white; }
-        .btn-remove { background-color: #e11d48; color: white; }
-        
-        .owner-section { background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
-        .owner-section h3 { margin: 0 0 10px 0; color: #4c1d95; font-size: 16px; }
-        .admin-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .admin-form input { flex: 1; min-width: 150px; }
-        
-        .footer-credit { text-align: center; margin-top: 20px; font-size: 12px; color: #64748b; font-weight: 600; border-top: 1px solid #cbd5e1; padding-top: 15px; }
-        .hidden { display: none !important; }
-    </style>
-</head>
-<body>
-
-<!-- SECTION 1: PUBLIC MEMBERSHIP REGISTRATION FORM -->
-<div class="card">
-    <h2>Digital Membership of Young Teachers Alliance (YTA) District Kashmore</h2>
-    <p class="subtitle">Please enter accurate information. Your application will remain pending until reviewed by YTA District Kashmore administration.</p>
-    
-    <form id="membershipForm">
-        <div class="form-group">
-            <label>Passport Size Photo</label>
-            <input type="file" id="photo" accept="image/*" required>
-        </div>
-
-        <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="full_name" placeholder="Enter full name" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Father/Husband Name</label>
-            <input type="text" id="father_name" placeholder="Enter father or husband name" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Caste / Tribe</label>
-            <input type="text" id="caste" placeholder="e.g. Dahani, Mazari, Soomro, etc." required>
-        </div>
-
-        <div class="form-group">
-            <label>CNIC</label>
-            <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="tel" id="mobile" placeholder="0300-1234567" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Taluka</label>
-            <select id="taluka" required>
-                <option value="" disabled selected>Select Taluka</option>
-                <option value="Kashmore">Kashmore</option>
-                <option value="Kandhkot">Kandhkot</option>
-                <option value="Tangwani">Tangwani</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>School Name</label>
-            <input type="text" id="school_name" placeholder="Enter school name" required>
-        </div>
-        
-        <div class="form-group">
-            <label>SEMIS Code</label>
-            <input type="text" id="semis_code" placeholder="Enter SEMIS code" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Designation</label>
-            <input type="text" id="designation" placeholder="e.g. PST, JEST, HST" required>
-        </div>
-        
-        <div class="form-group">
-            <label>BPS</label>
-            <input type="text" id="bps" placeholder="e.g. BPS-14" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Joining Date</label>
-            <input type="date" id="joining_date" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Address</label>
-            <textarea id="address" placeholder="Enter home address" required></textarea>
-        </div>
-
-        <button type="submit" id="submitBtn" class="btn-submit">Submit Registration</button>
-    </form>
-    
-    <div id="statusMessage"></div>
-    <div class="footer-credit">Created by Nasar Bazed Dahani</div>
-</div>
-
-<!-- SECTION 2: ADMIN / OWNER LOGIN PORTAL -->
+<!-- SECTION 2: ADMIN & OWNER LOGIN PORTAL -->
 <div id="loginCard" class="card">
     <h2>Admin & Owner Login</h2>
     <p class="subtitle">Access member applications and administrative controls</p>
@@ -319,7 +159,7 @@
     <div id="loginMsg" style="text-align: center; margin-top: 10px; color: red; font-size: 13px;"></div>
 </div>
 
-<!-- SECTION 3: MANAGEMENT DASHBOARD (VISIBLE AFTER LOGIN) -->
+<!-- SECTION 3: MANAGEMENT DASHBOARD -->
 <div id="dashboardCard" class="card dashboard-card hidden">
     <div class="dashboard-header">
         <h2 style="text-align: left; margin:0;">Digital Management Portal</h2>
@@ -336,7 +176,7 @@
     <!-- OWNER CONTROL PANEL -->
     <div id="ownerPanel" class="owner-section hidden">
         <h3>👑 Owner Control Panel (Manage Admins)</h3>
-        <p style="font-size: 12px; color: #64748b; margin-top: -5px;">Add or remove Admins who can review and approve member registrations.</p>
+        <p style="font-size: 12px; color: #64748b; margin-bottom: 12px;">Add or remove Admins who can review and approve member registrations.</p>
 
         <form id="addAdminForm" class="admin-form">
             <input type="text" id="newAdminName" placeholder="Admin Name" required>
@@ -423,7 +263,7 @@
     let currentUser = null;
     let allMembers = [];
 
-    // Form Handling
+    // Form Handling with Duplicate Check
     const form = document.getElementById('membershipForm');
     const submitBtn = document.getElementById('submitBtn');
     const statusMessage = document.getElementById('statusMessage');
@@ -432,13 +272,44 @@
         e.preventDefault();
         
         submitBtn.disabled = true;
-        submitBtn.innerText = 'Submitting...';
+        submitBtn.innerText = 'Checking...';
         statusMessage.innerText = '';
 
-        const photoFile = document.getElementById('photo').files[0];
-        let photoUrl = '';
+        const cnicInput = document.getElementById('cnic').value.trim();
+        const mobileInput = document.getElementById('mobile').value.trim();
 
         try {
+            // Check if CNIC or Mobile already exists
+            const { data: existingMembers, error: checkError } = await supabaseClient
+                .from('YTA District Kashmore Members')
+                .select('cnic, mobile')
+                .or(`cnic.eq.${cnicInput},mobile.eq.${mobileInput}`);
+
+            if (checkError) {
+                throw new Error(checkError.message);
+            }
+
+            if (existingMembers && existingMembers.length > 0) {
+                const matchCnic = existingMembers.some(m => m.cnic === cnicInput);
+                const matchMobile = existingMembers.some(m => m.mobile === mobileInput);
+
+                statusMessage.style.color = '#dc2626';
+                if (matchCnic && matchMobile) {
+                    statusMessage.innerText = 'Error: Yeh CNIC aur Mobile Number pehle se registered hain!';
+                } else if (matchCnic) {
+                    statusMessage.innerText = 'Error: Yeh CNIC number pehle se registered hai!';
+                } else {
+                    statusMessage.innerText = 'Error: Yeh Mobile Number pehle se registered hai!';
+                }
+                submitBtn.disabled = false;
+                submitBtn.innerText = 'Submit Registration';
+                return;
+            }
+
+            submitBtn.innerText = 'Uploading Photo...';
+            const photoFile = document.getElementById('photo').files[0];
+            let photoUrl = '';
+
             if (photoFile) {
                 const fileExt = photoFile.name.split('.').pop();
                 const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
@@ -459,39 +330,37 @@
                 }
             }
 
+            submitBtn.innerText = 'Submitting...';
             const formData = {
-                full_name: document.getElementById('full_name').value,
-                father_name: document.getElementById('father_name').value,
-                caste: document.getElementById('caste').value,
-                cnic: document.getElementById('cnic').value,
-                mobile: document.getElementById('mobile').value,
+                full_name: document.getElementById('full_name').value.trim(),
+                father_name: document.getElementById('father_name').value.trim(),
+                caste: document.getElementById('caste').value.trim(),
+                cnic: cnicInput,
+                mobile: mobileInput,
                 taluka: document.getElementById('taluka').value,
-                school_name: document.getElementById('school_name').value,
-                semis_code: document.getElementById('semis_code').value,
-                designation: document.getElementById('designation').value,
-                bps: document.getElementById('bps').value,
-                joining_date: document.getElementById('joining_date').value,
-                address: document.getElementById('address').value,
+                school_name: document.getElementById('school_name').value.trim(),
+                semis_code: document.getElementById('semis_code').value.trim(),
+                designation: document.getElementById('designation').value.trim(),
                 photo_url: photoUrl,
                 status: 'pending'
             };
 
-            const { data, error } = await supabaseClient
+            const { error: insertError } = await supabaseClient
                 .from('YTA District Kashmore Members')
                 .insert([formData]);
 
-            if (error) {
+            if (insertError) {
                 statusMessage.style.color = '#dc2626';
-                statusMessage.innerText = 'Error: ' + error.message;
+                statusMessage.innerText = 'Error: ' + insertError.message;
             } else {
                 statusMessage.style.color = '#16a34a';
-                statusMessage.innerText = 'Application submit ho gayi hai!';
+                statusMessage.innerText = 'Application successfully submitted!';
                 form.reset();
                 if (currentUser) loadMembers();
             }
         } catch (err) {
             statusMessage.style.color = '#dc2626';
-            statusMessage.innerText = 'An error occurred during submission.';
+            statusMessage.innerText = 'An error occurred: ' + (err.message || 'Unknown error');
         }
 
         submitBtn.disabled = false;
@@ -649,7 +518,7 @@
                     <td>${member.mobile || ''}</td>
                     <td>${member.taluka || ''}</td>
                     <td>${member.school_name || ''}</td>
-                    <td>${member.designation || ''} (${member.bps || ''})</td>
+                    <td>${member.designation || ''}</td>
                     <td><span class="badge ${statusClass}">${member.status || 'pending'}</span></td>
                     <td>
                         <button class="btn-action btn-approve" onclick="updateMemberStatus(${member.id}, 'approved')">Approve</button>
@@ -689,719 +558,3 @@
 
 </body>
 </html>
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .user-info { font-size: 13px; color: #334155; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-weight: 600; }
-        .role-badge { background-color: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
-        .role-owner { background-color: #7c3aed; }
-        
-        .stats-summary { display: flex; gap: 10px; }
-        .stat-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #334155; }
-        .stat-card span { color: #2563eb; font-weight: bold; }
-        
-        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
-        .controls input { flex: 1; min-width: 200px; }
-        
-        .table-responsive { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
-        th { background-color: #1e293b; color: #ffffff; font-weight: 600; white-space: nowrap; }
-        tr:hover { background-color: #f8fafc; }
-        
-        .member-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; }
-        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
-        .badge-pending { background-color: #fef08a; color: #854d0e; }
-        .badge-approved { background-color: #bbf7d0; color: #166534; }
-        .badge-rejected { background-color: #fecaca; color: #991b1b; }
-        
-        .btn-action { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
-        .btn-approve { background-color: #16a34a; color: white; }
-        .btn-reject { background-color: #dc2626; color: white; }
-        .btn-remove { background-color: #e11d48; color: white; }
-        
-        /* Owner Panel */
-        .owner-section { background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
-        .owner-section h3 { margin: 0 0 10px 0; color: #4c1d95; font-size: 16px; }
-        .admin-form { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px; }
-        .admin-form input { flex: 1; min-width: 150px; }
-        
-        .footer-credit { text-align: center; margin-top: 20px; font-size: 12px; color: #64748b; font-weight: 600; border-top: 1px solid #cbd5e1; padding-top: 15px; }
-        .hidden { display: none !important; }
-    </style>
-</head>
-<body>
-
-<!-- SECTION 1: PUBLIC MEMBERSHIP FORM -->
-<div class="card form-card">
-    <h2>Digital Membership Registration</h2>
-    <p class="subtitle">Please enter accurate information. Your application will remain pending until reviewed by YTA District Kashmore administration.</p>
-    
-    <form id="membershipForm">
-        <div class="form-group">
-            <label>Passport Size Photo</label>
-            <input type="file" id="photo" accept="image/*" required>
-        </div>
-
-        <div class="form-group">
-            <label>Full Name</label>
-            <input type="text" id="full_name" placeholder="Enter full name" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Father/Husband Name</label>
-            <input type="text" id="father_name" placeholder="Enter father or husband name" required>
-        </div>
-        
-        <div class="form-group">
-            <label>CNIC</label>
-            <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="tel" id="mobile" placeholder="0300-1234567" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Taluka</label>
-            <select id="taluka" required>
-                <option value="" disabled selected>Select Taluka</option>
-                <option value="Kashmore">Kashmore</option>
-                <option value="Kandhkot">Kandhkot</option>
-                <option value="Tangwani">Tangwani</option>
-            </select>
-        </div>
-        
-        <div class="form-group">
-            <label>School Name</label>
-            <input type="text" id="school_name" placeholder="Enter school name" required>
-        </div>
-        
-        <div class="form-group">
-            <label>SEMIS Code</label>
-            <input type="text" id="semis_code" placeholder="Enter SEMIS code" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Designation</label>
-            <input type="text" id="designation" value="Teacher" placeholder="e.g. PST, JEST, HST" required>
-        </div>
-        
-        <div class="form-group">
-            <label>BPS</label>
-            <input type="text" id="bps" placeholder="e.g. BPS-14" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Joining Date</label>
-            <input type="date" id="joining_date" required>
-        </div>
-        
-        <div class="form-group">
-            <label>Address</label>
-            <textarea id="address" placeholder="Enter home address" required></textarea>
-        </div>
-
-        <button type="submit" id="submitBtn" class="btn-submit">Submit Registration</button>
-    </form>
-    
-    <div id="statusMessage"></div>
-</div>
-
-<!-- SECTION 2: ADMIN / OWNER LOGIN -->
-<div id="loginCard" class="card login-card">
-    <h2>Admin & Owner Login</h2>
-    <p class="subtitle">Login to access members management portal</p>
-    
-    <form id="loginForm">
-        <div class="form-group">
-            <label>Email Address</label>
-            <input type="email" id="loginEmail" required placeholder="admin@example.com">
-        </div>
-        <div class="form-group">
-            <label>Passcode / PIN</label>
-            <input type="password" id="loginPasscode" required placeholder="Enter Secret Code">
-        </div>
-        <button type="submit" class="btn-submit">Login to Dashboard</button>
-    </form>
-    <div id="loginMsg" style="text-align: center; margin-top: 10px; color: red; font-size: 13px;"></div>
-</div>
-
-<!-- SECTION 3: MANAGEMENT DASHBOARD (HIDDEN UNTIL LOGIN) -->
-<div id="dashboardCard" class="card hidden">
-    <div class="dashboard-header">
-        <h2 style="text-align: left;">Digital Management Portal</h2>
-        
-        <div style="display: flex; gap: 15px; align-items: center;">
-            <div class="user-info">
-                Logged in: <span id="currentUserName">User</span> 
-                <span id="currentUserRole" class="role-badge">Admin</span>
-            </div>
-            <button onclick="logout()" class="btn-action btn-reject" style="padding: 8px 12px;">Logout</button>
-        </div>
-    </div>
-
-    <!-- OWNER CONTROL PANEL -->
-    <div id="ownerPanel" class="owner-section hidden">
-        <h3>👑 Owner Control Panel (Manage Admins)</h3>
-        <p style="font-size: 12px; color: #64748b; margin-top: -5px;">Add or remove Admins who can review and approve member registrations.</p>
-
-        <form id="addAdminForm" class="admin-form">
-            <input type="text" id="newAdminName" placeholder="Admin Name" required>
-            <input type="email" id="newAdminEmail" placeholder="Admin Email" required>
-            <input type="text" id="newAdminPasscode" placeholder="Passcode / PIN" required>
-            <button type="submit" class="btn-submit" style="width: auto; padding: 0 20px; margin-top: 0; background-color: #7c3aed;">Add New Admin</button>
-        </form>
-
-        <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Email</th>
-                        <th>Passcode</th>
-                        <th>Role</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="adminUsersTable">
-                    <!-- Dynamic Admins List -->
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- MEMBERS APPLICATIONS SECTION -->
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
-        <h3 style="margin:0; color:#1e3a8a;">Members Applications</h3>
-        <div class="stats-summary">
-            <div class="stat-card">Total: <span id="totalCount">0</span></div>
-            <div class="stat-card">Pending: <span id="pendingCount">0</span></div>
-        </div>
-    </div>
-
-    <div class="controls">
-        <input type="text" id="searchInput" placeholder="Search by Name, CNIC, Mobile or School..." onkeyup="filterMembers()">
-        <select id="statusFilter" onchange="filterMembers()" style="width: auto;">
-            <option value="all">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="approved">Approved</option>
-            <option value="rejected">Rejected</option>
-        </select>
-    </div>
-
-    <div class="table-responsive">
-        <table>
-            <thead>
-                <tr>
-                    <th>Photo</th>
-                    <th>Full Name</th>
-                    <th>Father Name</th>
-                    <th>CNIC</th>
-                    <th>Mobile</th>
-                    <th>Taluka</th>
-                    <th>School</th>
-                    <th>Desig / BPS</th>
-                    <th>Status</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody id="membersTableBody">
-                <tr><td colspan="10" style="text-align:center; padding: 15px;">Loading members...</td></tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="footer-credit">Created by Nasar Bazed Dahani</div>
-</div>
-
-<script>
-    // Supabase Connection Settings
-    const SUPABASE_URL = 'https://iqwauodmugcbxlmdvqas.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_rx8GDyrYmlMKlB4iB8Teug_FiB7iGNM';
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    // --- OWNER CREDENTIALS ---
-    const OWNER_CREDENTIALS = {
-        email: "zainmeeeer@gmail.com",
-        passcode: "owner@3484",
-        name: "Zain Meer",
-        role: "owner"
-    };
-
-    let currentUser = null;
-    let allMembers = [];
-
-    // --- MEMBERSHIP FORM SUBMISSION ---
-    const form = document.getElementById('membershipForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusMessage = document.getElementById('statusMessage');
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'Submitting...';
-        statusMessage.innerText = '';
-
-        const photoFile = document.getElementById('photo').files[0];
-        let photoUrl = '';
-
-        try {
-            if (photoFile) {
-                const fileExt = photoFile.name.split('.').pop();
-                const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
-                const filePath = `member_photos/${fileName}`;
-
-                const { data: uploadData, error: uploadError } = await supabaseClient
-                    .storage
-                    .from('member-photos')
-                    .upload(filePath, photoFile);
-
-                if (!uploadError) {
-                    const { data: publicUrlData } = supabaseClient
-                        .storage
-                        .from('member-photos')
-                        .getPublicUrl(filePath);
-                    
-                    photoUrl = publicUrlData.publicUrl;
-                }
-            }
-
-            const formData = {
-                full_name: document.getElementById('full_name').value,
-                father_name: document.getElementById('father_name').value,
-                cnic: document.getElementById('cnic').value,
-                mobile: document.getElementById('mobile').value,
-                taluka: document.getElementById('taluka').value,
-                school_name: document.getElementById('school_name').value,
-                semis_code: document.getElementById('semis_code').value,
-                designation: document.getElementById('designation').value,
-                bps: document.getElementById('bps').value,
-                address: document.getElementById('address').value,
-                photo_url: photoUrl,
-                status: 'pending'
-            };
-
-            const { data, error } = await supabaseClient
-                .from('YTA District Kashmore Members')
-                .insert([formData]);
-
-            if (error) {
-                statusMessage.style.color = '#dc2626';
-                statusMessage.innerText = 'Error: ' + error.message;
-            } else {
-                statusMessage.style.color = '#16a34a';
-                statusMessage.innerText = 'Application submit ho gayi hai!';
-                form.reset();
-                if (currentUser) loadMembers();
-            }
-        } catch (err) {
-            statusMessage.style.color = '#dc2626';
-            statusMessage.innerText = 'An error occurred during submission.';
-        }
-
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Registration';
-    });
-
-    // --- LOGIN HANDLER ---
-    document.getElementById('loginForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const email = document.getElementById('loginEmail').value.trim();
-        const passcode = document.getElementById('loginPasscode').value.trim();
-        const msg = document.getElementById('loginMsg');
-
-        msg.innerText = 'Verifying...';
-
-        // Check Owner Credentials
-        if (email.toLowerCase() === OWNER_CREDENTIALS.email.toLowerCase() && passcode === OWNER_CREDENTIALS.passcode) {
-            currentUser = OWNER_CREDENTIALS;
-        } else {
-            // Check Supabase for Sub-Admins
-            const { data, error } = await supabaseClient
-                .from('admin_users')
-                .select('*')
-                .eq('email', email)
-                .eq('passcode', passcode)
-                .single();
-
-            if (!error && data) {
-                currentUser = data;
-            }
-        }
-
-        if (!currentUser) {
-            msg.innerText = 'Invalid Email or Passcode!';
-            return;
-        }
-
-        document.getElementById('loginCard').classList.add('hidden');
-        document.getElementById('dashboardCard').classList.remove('hidden');
-
-        document.getElementById('currentUserName').innerText = currentUser.name;
-        const roleBadge = document.getElementById('currentUserRole');
-        roleBadge.innerText = currentUser.role;
-
-        if (currentUser.role === 'owner') {
-            roleBadge.classList.add('role-owner');
-            document.getElementById('ownerPanel').classList.remove('hidden');
-            loadAdmins();
-        }
-
-        loadMembers();
-    });
-
-    function logout() {
-        currentUser = null;
-        document.getElementById('dashboardCard').classList.add('hidden');
-        document.getElementById('ownerPanel').classList.add('hidden');
-        document.getElementById('loginCard').classList.remove('hidden');
-        document.getElementById('loginForm').reset();
-        document.getElementById('loginMsg').innerText = '';
-    }
-
-    // --- OWNER CONTROL PANEL (MANAGE ADMINS) ---
-    async function loadAdmins() {
-        const { data, error } = await supabaseClient
-            .from('admin_users')
-            .select('*');
-
-        const tbody = document.getElementById('adminUsersTable');
-        tbody.innerHTML = '';
-
-        // Owner row (Fixed)
-        tbody.innerHTML += `
-            <tr>
-                <td><b>${OWNER_CREDENTIALS.name}</b></td>
-                <td>${OWNER_CREDENTIALS.email}</td>
-                <td><code>${OWNER_CREDENTIALS.passcode}</code></td>
-                <td><span class="role-badge role-owner">owner</span></td>
-                <td><i>Owner (Main)</i></td>
-            </tr>
-        `;
-
-        if (data) {
-            data.forEach(user => {
-                const row = `
-                    <tr>
-                        <td><b>${user.name}</b></td>
-                        <td>${user.email}</td>
-                        <td><code>${user.passcode}</code></td>
-                        <td><span class="role-badge">${user.role}</span></td>
-                        <td>
-                            <button class="btn-action btn-remove" onclick="removeAdmin(${user.id})">Remove Admin</button>
-                        </td>
-                    </tr>
-                `;
-                tbody.innerHTML += row;
-            });
-        }
-    }
-
-    document.getElementById('addAdminForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        if (currentUser.role !== 'owner') return;
-
-        const name = document.getElementById('newAdminName').value.trim();
-        const email = document.getElementById('newAdminEmail').value.trim();
-        const passcode = document.getElementById('newAdminPasscode').value.trim();
-
-        const { error } = await supabaseClient
-            .from('admin_users')
-            .insert([{ name, email, passcode, role: 'admin' }]);
-
-        if (error) {
-            alert('Error adding admin: ' + error.message);
-        } else {
-            alert('New Admin added successfully!');
-            document.getElementById('addAdminForm').reset();
-            loadAdmins();
-        }
-    });
-
-    async function removeAdmin(id) {
-        if (currentUser.role !== 'owner') return;
-        if (!confirm('Are you sure you want to remove this admin?')) return;
-
-        const { error } = await supabaseClient
-            .from('admin_users')
-            .delete()
-            .eq('id', id);
-
-        if (error) {
-            alert('Error removing admin: ' + error.message);
-        } else {
-            loadAdmins();
-        }
-    }
-
-    // --- MEMBER APPLICATIONS MANAGEMENT ---
-    async function loadMembers() {
-        const { data, error } = await supabaseClient
-            .from('YTA District Kashmore Members')
-            .select('*')
-            .order('id', { ascending: false });
-
-        if (error) return;
-
-        allMembers = data;
-        updateStats(data);
-        renderMembersTable(allMembers);
-    }
-
-    function updateStats(members) {
-        document.getElementById('totalCount').innerText = members.length;
-        const pending = members.filter(m => (m.status || 'pending') === 'pending').length;
-        document.getElementById('pendingCount').innerText = pending;
-    }
-
-    function renderMembersTable(members) {
-        const tbody = document.getElementById('membersTableBody');
-        tbody.innerHTML = '';
-
-        if (members.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding: 15px;">No records found.</td></tr>';
-            return;
-        }
-
-        members.forEach(member => {
-            const photoSrc = member.photo_url || 'https://via.placeholder.com/40?text=No+Img';
-            const statusClass = `badge-${member.status || 'pending'}`;
-            
-            const row = `
-                <tr>
-                    <td><img src="${photoSrc}" class="member-img" alt="Photo"></td>
-                    <td><b>${member.full_name || ''}</b></td>
-                    <td>${member.father_name || ''}</td>
-                    <td>${member.cnic || ''}</td>
-                    <td>${member.mobile || ''}</td>
-                    <td>${member.taluka || ''}</td>
-                    <td>${member.school_name || ''}</td>
-                    <td>${member.designation || ''} (${member.bps || ''})</td>
-                    <td><span class="badge ${statusClass}">${member.status || 'pending'}</span></td>
-                    <td>
-                        <button class="btn-action btn-approve" onclick="updateMemberStatus(${member.id}, 'approved')">Approve</button>
-                        <button class="btn-action btn-reject" onclick="updateMemberStatus(${member.id}, 'rejected')">Reject</button>
-                    </td>
-                </tr>
-            `;
-            tbody.innerHTML += row;
-        });
-    }
-
-    async function updateMemberStatus(id, newStatus) {
-        const { error } = await supabaseClient
-            .from('YTA District Kashmore Members')
-            .update({ status: newStatus })
-            .eq('id', id);
-
-        if (error) {
-            alert('Error updating status: ' + error.message);
-        } else {
-            loadMembers();
-        }
-    }
-
-    function filterMembers() {
-        const searchValue = document.getElementById('searchInput').value.toLowerCase();
-        const statusValue = document.getElementById('statusFilter').value;
-
-        const filtered = allMembers.filter(m => {
-            const matchesSearch = (m.full_name && m.full_name.toLowerCase().includes(searchValue)) ||
-                                  (m.cnic && m.cnic.toLowerCase().includes(searchValue)) ||
-                                  (m.mobile && m.mobile.toLowerCase().includes(searchValue)) ||
-                                  (m.school_name && m.school_name.toLowerCase().includes(searchValue));
-            
-            const matchesStatus = statusValue === 'all' || (m.status || 'pending') === statusValue;
-
-            return matchesSearch && matchesStatus;
-        });
-
-        renderMembersTable(filtered);
-    }
-</script>
-
-</body>
-</html>
-        </div>
-        <div class="form-group">
-            <label>Father Name</label>
-            <input type="text" id="father_name" placeholder="Enter father name" required>
-        </div>
-        <div class="form-group">
-            <label>CNIC Number</label>
-            <input type="text" id="cnic" placeholder="43102-XXXXXXX-X" required>
-        </div>
-        <div class="form-group">
-            <label>Mobile Number</label>
-            <input type="tel" id="mobile" placeholder="0300-1234567" required>
-        </div>
-        <div class="form-group">
-            <label>School Name</label>
-            <input type="text" id="school_name" placeholder="Enter school name" required>
-        </div>
-        <div class="form-group">
-            <label>SEMIS Code</label>
-            <input type="text" id="semis_code" placeholder="Enter SEMIS code" required>
-        </div>
-        <div class="form-group">
-            <label>Designation</label>
-            <input type="text" id="designation" placeholder="e.g. PST, JEST, HST" required>
-        </div>
-        <div class="form-group">
-            <label>BPS</label>
-            <input type="text" id="bps" placeholder="e.g. BPS-14" required>
-        </div>
-        <div class="form-group">
-            <label>Taluka</label>
-            <input type="text" id="taluka" placeholder="Kashmore / Kandhkot / Tangwani" required>
-        </div>
-        <div class="form-group">
-            <label>Address</label>
-            <input type="text" id="address" placeholder="Enter home address" required>
-        </div>
-
-        <button type="submit" id="submitBtn">Submit Registration</button>
-    </form>
-    
-    <div id="statusMessage"></div>
-</div>
-
-<script>
-    // Supabase Credentials Connected
-    const SUPABASE_URL = 'https://iqwauodmugcbxlmdvqas.supabase.co';
-    const SUPABASE_ANON_KEY = 'sb_publishable_rx8GDyrYmlMKlB4iB8Teug_FiB7iGNM';
-
-    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
-
-    const form = document.getElementById('membershipForm');
-    const submitBtn = document.getElementById('submitBtn');
-    const statusMessage = document.getElementById('statusMessage');
-
-    form.addEventListener('submit', async function(e) {
-        e.preventDefault();
-        
-        submitBtn.disabled = true;
-        submitBtn.innerText = 'Submitting...';
-        statusMessage.innerText = '';
-
-        const formData = {
-            full_name: document.getElementById('full_name').value,
-            father_name: document.getElementById('father_name').value,
-            cnic: document.getElementById('cnic').value,
-            mobile: document.getElementById('mobile').value,
-            school_name: document.getElementById('school_name').value,
-            semis_code: document.getElementById('semis_code').value,
-            designation: document.getElementById('designation').value,
-            bps: document.getElementById('bps').value,
-            taluka: document.getElementById('taluka').value,
-            address: document.getElementById('address').value,
-            status: 'pending'
-        };
-
-        const { data, error } = await supabaseClient
-            .from('YTA District Kashmore Members')
-            .insert([formData]);
-
-        if (error) {
-            statusMessage.style.color = '#dc2626';
-            statusMessage.innerText = 'Error: ' + error.message;
-        } else {
-            statusMessage.style.color = '#16a34a';
-            statusMessage.innerText = 'Aap ki registration submit ho gayi hai! Admin approval ka intizar karein.';
-            form.reset();
-        }
-
-        submitBtn.disabled = false;
-        submitBtn.innerText = 'Submit Registration';
-    });
-</script>
-
-</body>
-</html>
-
-<section id="register" class="card hidden">
-<h2>Digital Membership Registration</h2>
-<div class="notice">Please enter accurate information. Your application will remain pending until reviewed by YTA District Kashmore administration.</div>
-<form id="regForm">
-<div class="grid">
-<div><label>Full Name<input name="name" required></label></div>
-<div><label>Father/Husband Name<input name="father" required></label></div>
-<div><label>CNIC<input name="cnic" placeholder="xxxxx-xxxxxxx-x" required></label></div>
-<div><label>Mobile Number<input name="mobile" required></label></div>
-<div><label>Taluka<select name="taluka" required><option value="">Select Taluka</option><option>Kashmore</option><option>Kandhkot</option><option>Tangwani</option></select></label></div>
-<div><label>School Name<input name="school" required></label></div>
-<div><label>SEMIS Code<input name="semis"></label></div>
-<div><label>Designation<input name="designation" value="Teacher"></label></div>
-<div><label>BPS<input name="bps"></label></div>
-<div><label>Joining Date<input name="joining" type="date"></label></div>
-</div>
-<br><label>Address<textarea name="address"></textarea></label><br><button type="submit">Submit Registration</button>
-</form>
-<div id="regResult"></div>
-</section>
-
-<section id="status" class="card hidden">
-<h2>Check Membership Status</h2>
-<label>Registration Number<input id="statusReg"></label><br>
-<button onclick="checkStatus()">Check</button><div id="statusResult"></div>
-</section>
-
-<section id="admin" class="card hidden">
-<div id="loginBox">
-<h2>Admin Login</h2>
-<p>Only authorized YTA District Kashmore administration should use this panel.</p>
-<label>Admin Password<input id="adminPass" type="password"></label><br>
-<button onclick="login()">Login</button><div id="loginMsg"></div>
-</div>
-<div id="dashboard" class="hidden">
-<h2>Admin Dashboard</h2>
-<div class="grid">
-<div class="card"><div class="stat" id="aTotal">0</div>Total</div>
-<div class="card"><div class="stat" id="aVerified">0</div>Verified</div>
-<div class="card"><div class="stat" id="aPending">0</div>Pending</div>
-</div>
-<div class="grid">
-<input id="search" placeholder="Search name, CNIC, school, registration no." oninput="renderTable()">
-<select id="filterTaluka" onchange="renderTable()"><option value="">All Talukas</option><option>Kashmore</option><option>Kandhkot</option><option>Tangwani</option></select>
-<select id="filterStatus" onchange="renderTable()"><option value="">All Status</option><option>Pending</option><option>Verified</option><option>Rejected</option></select>
-</div>
-<p><button onclick="exportCSV()">Export CSV</button> <button class="danger" onclick="clearAll()">Delete All Data</button> <button class="secondary" onclick="logout()">Logout</button></p>
-<div style="overflow:auto"><table><thead><tr><th>Reg No</th><th>Name</th><th>CNIC</th><th>Taluka</th><th>School</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div>
-</div>
-</section>
-
-<script>
-const ADMIN_PASSWORD="YTA-Kashmore-2026";
-const KEY="yta_kashmore_members";
-let members=JSON.parse(localStorage.getItem(KEY)||"[]");
-function save(){localStorage.setItem(KEY,JSON.stringify(members));updateStats()}
-function show(id){document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="admin"&&sessionStorage.getItem("ytaAdmin"))openDash();updateStats()}
-function updateStats(){
- let v=members.filter(x=>x.status==="Verified").length,p=members.filter(x=>x.status==="Pending").length;
- ["homeTotal","aTotal"].forEach(id=>{let e=document.getElementById(id);if(e)e.textContent=members.length});
- ["homeVerified","aVerified"].forEach(id=>{let e=document.getElementById(id);if(e)e.textContent=v});
- ["homePending","aPending"].forEach(id=>{let e=document.getElementById(id);if(e)e.textContent=p});
-}
-function nextReg(){let n=members.length+1;return "YTA-KMR-"+String(n).padStart(5,"0")}
-document.getElementById("regForm").addEventListener("submit",e=>{
- e.preventDefault();let f=new FormData(e.target),m=Object.fromEntries(f.entries());
- m.reg=nextReg();m.status="Pending";m.created=new Date().toISOString();members.push(m);save();e.target.reset();
- document.getElementById("regResult").innerHTML=`<div class="notice"><b>Registration submitted.</b><br>Your Registration Number is <strong>${m.reg}</strong>. Please keep it safe.</div>`;
-});
-function checkStatus(){let r=document.getElementById("statusReg").value.trim().toUpperCase();let m=members.find(x=>x.reg===r);
- document.getElementById("statusResult").innerHTML=m?`<div class="notice"><b>${m.name}</b><br>Registration: ${m.reg}<br>Taluka: ${m.taluka}<br>Status: <strong>${m.status}</strong></div>`:"<div class='notice'>No record found.</div>";
-}
-function login(){if(document.getElementById("adminPass").value===ADMIN_PASSWORD){sessionStorage.setItem("ytaAdmin","1");openDash()}else document.getElementById("loginMsg").textContent="Incorrect password."}
-function openDash(){document.getElementById("loginBox").classList.add("hidden");document.getElementById("dashboard").classList.remove("hidden");renderTable();updateStats()}
-function logout(){sessionStorage.removeItem("ytaAdmin");document.getElementById("dashboard").classList.add("hidden");document.getElementById("loginBox").classList.remove("hidden")}
-function renderTable(){let q=(document.getElementById("search")?.value||"").toLowerCase(),t=document.getElementById("filterTaluka")?.value||"",s=document.getElementById("filterStatus")?.value||"";
- let arr=members.filter(m=>(!q||[m.reg,m.name,m.cnic,m.school].join(" ").toLowerCase().includes(q))&&(!t||m.taluka===t)&&(!s||m.status===s));
- document.getElementById("rows").innerHTML=arr.map(m=>`<tr><td>${m.reg}</td><td>${m.name}</td><td>${m.cnic}</td><td>${m.taluka}</td><td>${m.school}</td><td><span class="badge ${m.status.toLowerCase()}">${m.status}</span></td><td><button onclick="changeStatus('${m.reg}','Verified')">Verify</button> <button class="danger" onclick="changeStatus('${m.reg}','Rejected')">Reject</button></td></tr>`).join("")||"<tr><td colspan='7'>No records.</td></tr>"
-}
-function changeStatus(reg,status){let m=members.find(x=>x.reg===reg);if(m){m.status=status;save();renderTable()}}
-function exportCSV(){let cols=["reg","name","father","cnic","mobile","taluka","school","semis","designation","bps","joining","address","status","created"];let csv=[cols.join(","),...members.map(m=>cols.map(c=>`"${String(m[c]||"").replaceAll('"','""')}"`).join(","))].join("\\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="YTA_District_Kashmore_Members.csv";a.click()}
-function clearAll(){if(confirm("Delete ALL member records from this browser?")){members=[];save();renderTable()}}
-updateStats();
-</script>
-</body></html>
