@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Young Teachers Alliance (YTA) District Kashmore</title>
+    <title>Digital Membership of Young Teachers Alliance (YTA) District Kashmore</title>
     
     <!-- Supabase Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -12,28 +12,172 @@
         * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         body { background-color: #eef2f5; margin: 0; padding: 20px 10px; }
         
-        /* Containers */
-        .card { max-width: 550px; background: #ffffff; padding: 25px; border-radius: 12px; margin: 0 auto 25px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
-        .dashboard-card { max-width: 1100px; }
+        .card { max-width: 450px; background: #ffffff; padding: 25px; border-radius: 12px; margin: 0 auto; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        h2 { text-align: center; color: #1e3a8a; margin: 0 0 8px 0; font-size: 18px; font-weight: 700; line-height: 1.3; }
+        p.subtitle { text-align: center; color: #475569; font-size: 12px; line-height: 1.4; margin-bottom: 20px; }
         
-        h2 { text-align: center; color: #1e3a8a; margin: 0 0 8px 0; font-size: 22px; font-weight: 700; }
-        p.subtitle { text-align: center; color: #475569; font-size: 13px; line-height: 1.5; margin-bottom: 22px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background-color: #fff; }
+        input[type="file"] { padding: 6px; background-color: #f8fafc; }
+        input:focus, select:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
         
-        /* Inputs & Labels */
-        .form-group { margin-bottom: 14px; }
-        label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 5px; }
-        input, select, textarea { width: 100%; padding: 10px 12px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; background-color: #fff; }
-        input[type="file"] { padding: 8px; background-color: #f8fafc; }
-        input:focus, select:focus, textarea:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
-        textarea { resize: vertical; min-height: 70px; }
-        
-        .btn-submit { width: 100%; padding: 12px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-submit { width: 100%; padding: 11px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .btn-submit:hover { background-color: #1d4ed8; }
         .btn-submit:disabled { background-color: #94a3b8; cursor: not-allowed; }
-        #statusMessage { margin-top: 15px; text-align: center; font-weight: bold; font-size: 14px; }
+        
+        #statusMessage { margin-top: 12px; text-align: center; font-weight: bold; font-size: 13px; }
+        .footer-credit { text-align: center; margin-top: 18px; font-size: 11px; color: #64748b; font-weight: 600; border-top: 1px solid #cbd5e1; padding-top: 12px; }
+    </style>
+</head>
+<body>
 
-        /* Dashboard Styles */
-        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+<!-- ONLY 1 SINGLE MEMBERSHIP FORM SECTION -->
+<div class="card">
+    <h2>Digital Membership of Young Teachers Alliance (YTA) District Kashmore</h2>
+    <p class="subtitle">Please enter accurate information to register your membership.</p>
+    
+    <form id="membershipForm">
+        <div class="form-group">
+            <label>Passport Size Photo</label>
+            <input type="file" id="photo" accept="image/*" required>
+        </div>
+
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="full_name" placeholder="Enter full name" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Father/Husband Name</label>
+            <input type="text" id="father_name" placeholder="Enter father or husband name" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Caste / Tribe</label>
+            <input type="text" id="caste" placeholder="e.g. Dahani, Mazari, Soomro, etc." required>
+        </div>
+
+        <div class="form-group">
+            <label>CNIC</label>
+            <input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="mobile" placeholder="0300-1234567" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Taluka</label>
+            <select id="taluka" required>
+                <option value="" disabled selected>Select Taluka</option>
+                <option value="Kashmore">Kashmore</option>
+                <option value="Kandhkot">Kandhkot</option>
+                <option value="Tangwani">Tangwani</option>
+            </select>
+        </div>
+        
+        <div class="form-group">
+            <label>School Name</label>
+            <input type="text" id="school_name" placeholder="Enter school name" required>
+        </div>
+        
+        <div class="form-group">
+            <label>SEMIS Code</label>
+            <input type="text" id="semis_code" placeholder="Enter SEMIS code" required>
+        </div>
+        
+        <div class="form-group">
+            <label>Designation & BPS</label>
+            <input type="text" id="designation" placeholder="e.g. JEST (BPS-14)" required>
+        </div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Submit Registration</button>
+    </form>
+    
+    <div id="statusMessage"></div>
+    <div class="footer-credit">Created by Nasar Bazed Dahani</div>
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://iqwauodmugcbxlmdvqas.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_rx8GDyrYmlMKlB4iB8Teug_FiB7iGNM';
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById('membershipForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+        statusMessage.innerText = '';
+
+        const photoFile = document.getElementById('photo').files[0];
+        let photoUrl = '';
+
+        try {
+            if (photoFile) {
+                const fileExt = photoFile.name.split('.').pop();
+                const fileName = `${Date.now()}_${Math.random()}.${fileExt}`;
+                const filePath = `member_photos/${fileName}`;
+
+                const { data: uploadData, error: uploadError } = await supabaseClient
+                    .storage
+                    .from('member-photos')
+                    .upload(filePath, photoFile);
+
+                if (!uploadError) {
+                    const { data: publicUrlData } = supabaseClient
+                        .storage
+                        .from('member-photos')
+                        .getPublicUrl(filePath);
+                    
+                    photoUrl = publicUrlData.publicUrl;
+                }
+            }
+
+            const formData = {
+                full_name: document.getElementById('full_name').value,
+                father_name: document.getElementById('father_name').value,
+                caste: document.getElementById('caste').value,
+                cnic: document.getElementById('cnic').value,
+                mobile: document.getElementById('mobile').value,
+                taluka: document.getElementById('taluka').value,
+                school_name: document.getElementById('school_name').value,
+                semis_code: document.getElementById('semis_code').value,
+                designation: document.getElementById('designation').value,
+                photo_url: photoUrl,
+                status: 'pending'
+            };
+
+            const { data, error } = await supabaseClient
+                .from('YTA District Kashmore Members')
+                .insert([formData]);
+
+            if (error) {
+                statusMessage.style.color = '#dc2626';
+                statusMessage.innerText = 'Error: ' + error.message;
+            } else {
+                statusMessage.style.color = '#16a34a';
+                statusMessage.innerText = 'Application successfully submitted!';
+                form.reset();
+            }
+        } catch (err) {
+            statusMessage.style.color = '#dc2626';
+            statusMessage.innerText = 'An error occurred during submission.';
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Registration';
+    });
+</script>
+
+</body>
+</html>
         .user-info { font-size: 13px; color: #334155; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-weight: 600; }
         .role-badge { background-color: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
         .role-owner { background-color: #7c3aed; }
