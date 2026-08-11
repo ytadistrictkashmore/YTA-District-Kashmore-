@@ -1,39 +1,135 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>YTA District Kashmore</title>
-<style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
-header{background:#0b5d3b;color:white;padding:18px;text-align:center}header h1{margin:0;font-size:25px}header p{margin:5px 0 0}
-nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:white;justify-content:center;box-shadow:0 2px 8px #0001}
-button,.btn{border:0;border-radius:8px;padding:10px 14px;background:#0b5d3b;color:#fff;cursor:pointer}
-button.secondary{background:#56616f}.danger{background:#b42318}.card{background:white;border-radius:12px;padding:18px;margin:15px auto;max-width:1050px;box-shadow:0 2px 12px #00000010}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
-input,select,textarea{width:100%;padding:10px;border:1px solid #ccd3dc;border-radius:8px;margin-top:5px}
-label{font-weight:600;font-size:14px}.stat{font-size:28px;font-weight:bold}.hidden{display:none}
-table{width:100%;border-collapse:collapse;margin-top:10px}th,td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px}
-.badge{padding:4px 8px;border-radius:12px;background:#eef2f6}.verified{background:#dff6e8;color:#146c3b}.pending{background:#fff3cd;color:#795900}
-.notice{padding:10px;border-radius:8px;background:#eef7ff;margin:10px 0}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YTA District Kashmore - Membership Form</title>
+    
+    <!-- Supabase CDN Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #eef2f5; margin: 0; padding: 15px; }
+        .container { max-width: 500px; background: #ffffff; padding: 20px; border-radius: 12px; margin: auto; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1e293b; margin-bottom: 5px; font-size: 20px; }
+        p.subtitle { text-align: center; color: #64748b; font-size: 13px; margin-bottom: 20px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 13px; font-weight: 600; color: #334155; margin-bottom: 4px; }
+        input { width: 100%; padding: 10px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; outline: none; }
+        input:focus { border-color: #2563eb; box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2); }
+        button { width: 100%; padding: 12px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-size: 16px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        button:hover { background-color: #1d4ed8; }
+        button:disabled { background-color: #94a3b8; cursor: not-allowed; }
+        #statusMessage { margin-top: 15px; text-align: center; font-weight: bold; font-size: 14px; }
+    </style>
 </head>
 <body>
-<header><h1>Young Teachers Alliance (YTA)</h1><p>District Kashmore — Digital Membership & Management System</p></header>
-<nav>
-<button onclick="show('home')">Home</button><button onclick="show('register')">Membership Registration</button>
-<button onclick="show('status')">Check Status</button><button onclick="show('admin')">Admin Panel</button>
-</nav>
 
-<section id="home" class="card">
-<h2>Welcome to YTA District Kashmore</h2>
-<p>Teachers can submit membership information online. The administrator can review, verify, manage and export records.</p>
-<div class="grid">
-<div class="card"><div class="stat" id="homeTotal">0</div>Total Members</div>
-<div class="card"><div class="stat" id="homeVerified">0</div>Verified</div>
-<div class="card"><div class="stat" id="homePending">0</div>Pending</div>
+<div class="container">
+    <h2>YTA District Kashmore</h2>
+    <p class="subtitle">Online Membership Registration Form</p>
+    
+    <form id="membershipForm">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" id="full_name" placeholder="Enter full name" required>
+        </div>
+        <div class="form-group">
+            <label>Father Name</label>
+            <input type="text" id="father_name" placeholder="Enter father name" required>
+        </div>
+        <div class="form-group">
+            <label>CNIC Number</label>
+            <input type="text" id="cnic" placeholder="43102-XXXXXXX-X" required>
+        </div>
+        <div class="form-group">
+            <label>Mobile Number</label>
+            <input type="tel" id="mobile" placeholder="0300-1234567" required>
+        </div>
+        <div class="form-group">
+            <label>School Name</label>
+            <input type="text" id="school_name" placeholder="Enter school name" required>
+        </div>
+        <div class="form-group">
+            <label>SEMIS Code</label>
+            <input type="text" id="semis_code" placeholder="Enter SEMIS code" required>
+        </div>
+        <div class="form-group">
+            <label>Designation</label>
+            <input type="text" id="designation" placeholder="e.g. PST, JEST, HST" required>
+        </div>
+        <div class="form-group">
+            <label>BPS</label>
+            <input type="text" id="bps" placeholder="e.g. BPS-14" required>
+        </div>
+        <div class="form-group">
+            <label>Taluka</label>
+            <input type="text" id="taluka" placeholder="Kashmore / Kandhkot / Tangwani" required>
+        </div>
+        <div class="form-group">
+            <label>Address</label>
+            <input type="text" id="address" placeholder="Enter home address" required>
+        </div>
+
+        <button type="submit" id="submitBtn">Submit Registration</button>
+    </form>
+    
+    <div id="statusMessage"></div>
 </div>
-</section>
+
+<script>
+    // Supabase Credentials Connected
+    const SUPABASE_URL = 'https://iqwauodmugcbxlmdvqas.supabase.co';
+    const SUPABASE_ANON_KEY = 'sb_publishable_rx8GDyrYmlMKlB4iB8Teug_FiB7iGNM';
+
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const form = document.getElementById('membershipForm');
+    const submitBtn = document.getElementById('submitBtn');
+    const statusMessage = document.getElementById('statusMessage');
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+        statusMessage.innerText = '';
+
+        const formData = {
+            full_name: document.getElementById('full_name').value,
+            father_name: document.getElementById('father_name').value,
+            cnic: document.getElementById('cnic').value,
+            mobile: document.getElementById('mobile').value,
+            school_name: document.getElementById('school_name').value,
+            semis_code: document.getElementById('semis_code').value,
+            designation: document.getElementById('designation').value,
+            bps: document.getElementById('bps').value,
+            taluka: document.getElementById('taluka').value,
+            address: document.getElementById('address').value,
+            status: 'pending'
+        };
+
+        const { data, error } = await supabaseClient
+            .from('YTA District Kashmore Members')
+            .insert([formData]);
+
+        if (error) {
+            statusMessage.style.color = '#dc2626';
+            statusMessage.innerText = 'Error: ' + error.message;
+        } else {
+            statusMessage.style.color = '#16a34a';
+            statusMessage.innerText = 'Aap ki registration submit ho gayi hai! Admin approval ka intizar karein.';
+            form.reset();
+        }
+
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Registration';
+    });
+</script>
+
+</body>
+</html>
 
 <section id="register" class="card hidden">
 <h2>Digital Membership Registration</h2>
