@@ -1,0 +1,122 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>YTA District Kashmore</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f4f7fb;color:#172033}
+header{background:#0b5d3b;color:white;padding:18px;text-align:center}header h1{margin:0;font-size:25px}header p{margin:5px 0 0}
+nav{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:white;justify-content:center;box-shadow:0 2px 8px #0001}
+button,.btn{border:0;border-radius:8px;padding:10px 14px;background:#0b5d3b;color:#fff;cursor:pointer}
+button.secondary{background:#56616f}.danger{background:#b42318}.card{background:white;border-radius:12px;padding:18px;margin:15px auto;max-width:1050px;box-shadow:0 2px 12px #00000010}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px}
+input,select,textarea{width:100%;padding:10px;border:1px solid #ccd3dc;border-radius:8px;margin-top:5px}
+label{font-weight:600;font-size:14px}.stat{font-size:28px;font-weight:bold}.hidden{display:none}
+table{width:100%;border-collapse:collapse;margin-top:10px}th,td{padding:9px;border-bottom:1px solid #e5e7eb;text-align:left;font-size:13px}
+.badge{padding:4px 8px;border-radius:12px;background:#eef2f6}.verified{background:#dff6e8;color:#146c3b}.pending{background:#fff3cd;color:#795900}
+.notice{padding:10px;border-radius:8px;background:#eef7ff;margin:10px 0}
+</style>
+</head>
+<body>
+<header><h1>Young Teachers Alliance (YTA)</h1><p>District Kashmore — Digital Membership & Management System</p></header>
+<nav>
+<button onclick="show('home')">Home</button><button onclick="show('register')">Membership Registration</button>
+<button onclick="show('status')">Check Status</button><button onclick="show('admin')">Admin Panel</button>
+</nav>
+
+<section id="home" class="card">
+<h2>Welcome to YTA District Kashmore</h2>
+<p>Teachers can submit membership information online. The administrator can review, verify, manage and export records.</p>
+<div class="grid">
+<div class="card"><div class="stat" id="homeTotal">0</div>Total Members</div>
+<div class="card"><div class="stat" id="homeVerified">0</div>Verified</div>
+<div class="card"><div class="stat" id="homePending">0</div>Pending</div>
+</div>
+</section>
+
+<section id="register" class="card hidden">
+<h2>Digital Membership Registration</h2>
+<div class="notice">Please enter accurate information. Your application will remain pending until reviewed by YTA District Kashmore administration.</div>
+<form id="regForm">
+<div class="grid">
+<div><label>Full Name<input name="name" required></label></div>
+<div><label>Father/Husband Name<input name="father" required></label></div>
+<div><label>CNIC<input name="cnic" placeholder="xxxxx-xxxxxxx-x" required></label></div>
+<div><label>Mobile Number<input name="mobile" required></label></div>
+<div><label>Taluka<select name="taluka" required><option value="">Select Taluka</option><option>Kashmore</option><option>Kandhkot</option><option>Tangwani</option></select></label></div>
+<div><label>School Name<input name="school" required></label></div>
+<div><label>SEMIS Code<input name="semis"></label></div>
+<div><label>Designation<input name="designation" value="Teacher"></label></div>
+<div><label>BPS<input name="bps"></label></div>
+<div><label>Joining Date<input name="joining" type="date"></label></div>
+</div>
+<br><label>Address<textarea name="address"></textarea></label><br><button type="submit">Submit Registration</button>
+</form>
+<div id="regResult"></div>
+</section>
+
+<section id="status" class="card hidden">
+<h2>Check Membership Status</h2>
+<label>Registration Number<input id="statusReg"></label><br>
+<button onclick="checkStatus()">Check</button><div id="statusResult"></div>
+</section>
+
+<section id="admin" class="card hidden">
+<div id="loginBox">
+<h2>Admin Login</h2>
+<p>Only authorized YTA District Kashmore administration should use this panel.</p>
+<label>Admin Password<input id="adminPass" type="password"></label><br>
+<button onclick="login()">Login</button><div id="loginMsg"></div>
+</div>
+<div id="dashboard" class="hidden">
+<h2>Admin Dashboard</h2>
+<div class="grid">
+<div class="card"><div class="stat" id="aTotal">0</div>Total</div>
+<div class="card"><div class="stat" id="aVerified">0</div>Verified</div>
+<div class="card"><div class="stat" id="aPending">0</div>Pending</div>
+</div>
+<div class="grid">
+<input id="search" placeholder="Search name, CNIC, school, registration no." oninput="renderTable()">
+<select id="filterTaluka" onchange="renderTable()"><option value="">All Talukas</option><option>Kashmore</option><option>Kandhkot</option><option>Tangwani</option></select>
+<select id="filterStatus" onchange="renderTable()"><option value="">All Status</option><option>Pending</option><option>Verified</option><option>Rejected</option></select>
+</div>
+<p><button onclick="exportCSV()">Export CSV</button> <button class="danger" onclick="clearAll()">Delete All Data</button> <button class="secondary" onclick="logout()">Logout</button></p>
+<div style="overflow:auto"><table><thead><tr><th>Reg No</th><th>Name</th><th>CNIC</th><th>Taluka</th><th>School</th><th>Status</th><th>Action</th></tr></thead><tbody id="rows"></tbody></table></div>
+</div>
+</section>
+
+<script>
+const ADMIN_PASSWORD="YTA-Kashmore-2026";
+const KEY="yta_kashmore_members";
+let members=JSON.parse(localStorage.getItem(KEY)||"[]");
+function save(){localStorage.setItem(KEY,JSON.stringify(members));updateStats()}
+function show(id){document.querySelectorAll("section").forEach(x=>x.classList.add("hidden"));document.getElementById(id).classList.remove("hidden");if(id==="admin"&&sessionStorage.getItem("ytaAdmin"))openDash();updateStats()}
+function updateStats(){
+ let v=members.filter(x=>x.status==="Verified").length,p=members.filter(x=>x.status==="Pending").length;
+ ["homeTotal","aTotal"].forEach(id=>{let e=document.getElementById(id);if(e)e.textContent=members.length});
+ ["homeVerified","aVerified"].forEach(id=>{let e=document.getElementById(id);if(e)e.textContent=v});
+ ["homePending","aPending"].forEach(id=>{let e=document.getElementById(id);if(e)e.textContent=p});
+}
+function nextReg(){let n=members.length+1;return "YTA-KMR-"+String(n).padStart(5,"0")}
+document.getElementById("regForm").addEventListener("submit",e=>{
+ e.preventDefault();let f=new FormData(e.target),m=Object.fromEntries(f.entries());
+ m.reg=nextReg();m.status="Pending";m.created=new Date().toISOString();members.push(m);save();e.target.reset();
+ document.getElementById("regResult").innerHTML=`<div class="notice"><b>Registration submitted.</b><br>Your Registration Number is <strong>${m.reg}</strong>. Please keep it safe.</div>`;
+});
+function checkStatus(){let r=document.getElementById("statusReg").value.trim().toUpperCase();let m=members.find(x=>x.reg===r);
+ document.getElementById("statusResult").innerHTML=m?`<div class="notice"><b>${m.name}</b><br>Registration: ${m.reg}<br>Taluka: ${m.taluka}<br>Status: <strong>${m.status}</strong></div>`:"<div class='notice'>No record found.</div>";
+}
+function login(){if(document.getElementById("adminPass").value===ADMIN_PASSWORD){sessionStorage.setItem("ytaAdmin","1");openDash()}else document.getElementById("loginMsg").textContent="Incorrect password."}
+function openDash(){document.getElementById("loginBox").classList.add("hidden");document.getElementById("dashboard").classList.remove("hidden");renderTable();updateStats()}
+function logout(){sessionStorage.removeItem("ytaAdmin");document.getElementById("dashboard").classList.add("hidden");document.getElementById("loginBox").classList.remove("hidden")}
+function renderTable(){let q=(document.getElementById("search")?.value||"").toLowerCase(),t=document.getElementById("filterTaluka")?.value||"",s=document.getElementById("filterStatus")?.value||"";
+ let arr=members.filter(m=>(!q||[m.reg,m.name,m.cnic,m.school].join(" ").toLowerCase().includes(q))&&(!t||m.taluka===t)&&(!s||m.status===s));
+ document.getElementById("rows").innerHTML=arr.map(m=>`<tr><td>${m.reg}</td><td>${m.name}</td><td>${m.cnic}</td><td>${m.taluka}</td><td>${m.school}</td><td><span class="badge ${m.status.toLowerCase()}">${m.status}</span></td><td><button onclick="changeStatus('${m.reg}','Verified')">Verify</button> <button class="danger" onclick="changeStatus('${m.reg}','Rejected')">Reject</button></td></tr>`).join("")||"<tr><td colspan='7'>No records.</td></tr>"
+}
+function changeStatus(reg,status){let m=members.find(x=>x.reg===reg);if(m){m.status=status;save();renderTable()}}
+function exportCSV(){let cols=["reg","name","father","cnic","mobile","taluka","school","semis","designation","bps","joining","address","status","created"];let csv=[cols.join(","),...members.map(m=>cols.map(c=>`"${String(m[c]||"").replaceAll('"','""')}"`).join(","))].join("\\n");let a=document.createElement("a");a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));a.download="YTA_District_Kashmore_Members.csv";a.click()}
+function clearAll(){if(confirm("Delete ALL member records from this browser?")){members=[];save();renderTable()}}
+updateStats();
+</script>
+</body></html>
