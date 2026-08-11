@@ -19,7 +19,8 @@
         <input type="file" id="photo" accept="image/*" required>
         <input type="text" id="full_name" placeholder="Full Name" required>
         <input type="text" id="father_name" placeholder="Father Name" required>
-        <input type="text" id="cnic" placeholder="CNIC (e.g., 43502-0402456-3)" required>
+        <input type="text" id="caste" placeholder="Caste" required>
+        <input type="text" id="cnic" placeholder="CNIC (e.g., 43502-0402456-7)" required>
         <input type="tel" id="mobile" placeholder="Mobile Number" required>
         <select id="taluka" required>
             <option value="Tangwani">Tangwani</option>
@@ -35,6 +36,7 @@
 </div>
 
 <script>
+    // Supabase Config
     const SUPABASE_URL = "https://iqwauodmugcbxlmdvqas.supabase.co";
     const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlxd2F1b2RtdWdjYnhsbWR2cWFzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2NTQwMDAsImV4cCI6MjA3MjkxMDAwMH0.T3vF-qP47v3Kx-6yR-3xV1d9p-5Xv_lW4t5p_Gz_Q_s";
     const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
@@ -46,16 +48,19 @@
         btn.innerText = "Submitting...";
         
         try {
+            // 1. Photo Upload
             const file = document.getElementById('photo').files[0];
             const fileName = `photos/${Date.now()}_${file.name}`;
-            const { error: uploadErr } = await supabase.storage.from('member-photos').upload(fileName, file);
+            const { data: uploadData, error: uploadErr } = await supabase.storage.from('member-photos').upload(fileName, file);
             if (uploadErr) throw uploadErr;
             
             const { data: urlData } = supabase.storage.from('member-photos').getPublicUrl(fileName);
 
+            // 2. Insert Data
             const { error: dbErr } = await supabase.from('YTA District Kashmore Members').insert([{
                 full_name: document.getElementById('full_name').value,
                 father_name: document.getElementById('father_name').value,
+                caste: document.getElementById('caste').value,
                 cnic: document.getElementById('cnic').value,
                 mobile: document.getElementById('mobile').value,
                 taluka: document.getElementById('taluka').value,
@@ -69,7 +74,6 @@
             if (dbErr) throw dbErr;
             msg.innerText = "Successfully Registered!";
             msg.style.color = "green";
-            document.getElementById('regForm').reset();
         } catch (err) {
             msg.innerText = "Error: " + err.message;
             msg.style.color = "red";
