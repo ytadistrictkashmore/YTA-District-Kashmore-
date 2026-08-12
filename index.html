@@ -28,12 +28,12 @@
             <form id="membershipForm" class="space-y-4">
                 <input type="text" id="fullName" placeholder="Full Name" required class="w-full px-3 py-2 border rounded-lg">
                 <input type="text" id="fatherName" placeholder="Father's/Husband Name" required class="w-full px-3 py-2 border rounded-lg">
-                <input type="text" id="caste" placeholder="Caste" required class="w-full px-3 py-2 border rounded-lg">
-                <input type="text" id="cnic" placeholder="CNIC (e.g. 41201-1234567-1)" required class="w-full px-3 py-2 border rounded-lg">
+                <input type="text" id="caste" placeholder="Caste (e.g. Dahani, Khoso)" required class="w-full px-3 py-2 border rounded-lg">
+                <input type="text" id="cnic" placeholder="CNIC (e.g. 43502-0402456-3)" required class="w-full px-3 py-2 border rounded-lg">
                 <input type="tel" id="phoneNumber" placeholder="Mobile Number" required class="w-full px-3 py-2 border rounded-lg">
                 <input type="text" id="school" placeholder="School Name" required class="w-full px-3 py-2 border rounded-lg">
                 <input type="text" id="semisCode" placeholder="SEMIS Code" required class="w-full px-3 py-2 border rounded-lg">
-                <select id="taluka" required class="w-full px-3 py-2 border rounded-lg">
+                <select id="taluka" required class="w-full px-3 py-2 border rounded-lg bg-white">
                     <option value="">Select Taluka</option>
                     <option value="Tangwani">Tangwani</option>
                     <option value="Kashmore">Kashmore</option>
@@ -65,12 +65,16 @@
             <div id="adminContent" class="hidden">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
                     <input type="text" id="searchInput" onkeyup="filterMembers()" placeholder="Search Name, CNIC, or Taluka..." class="w-full px-3 py-2 border rounded-lg text-sm">
-                    <select id="talukaFilter" onchange="filterMembers()" class="w-full px-3 py-2 border rounded-lg text-sm">
+                    <select id="talukaFilter" onchange="filterMembers()" class="w-full px-3 py-2 border rounded-lg text-sm bg-white">
                         <option value="">All Talukas</option>
                         <option value="Tangwani">Tangwani</option>
                         <option value="Kashmore">Kashmore</option>
                         <option value="Kandhkot">Kandhkot</option>
                     </select>
+                </div>
+                <div class="flex justify-between items-center mb-2">
+                    <span id="userRoleBadge" class="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-800 rounded"></span>
+                    <span id="recordCount" class="text-xs text-slate-500"></span>
                 </div>
                 <div class="overflow-x-auto max-h-96 border rounded-lg">
                     <table class="w-full text-sm text-left">
@@ -92,9 +96,11 @@
 
     <script>
         const SUPABASE_URL = "https://mkrbxzlkzjgcswhvfhmx.supabase.co";
-        const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rcnh6emxrempnY3N3aHZmaG14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5Nzg0NzEsImV4cCI6MjAzMTU1NDQ3MX0.9mQ5vL8x2K3p4N6s7t8u9v0w1x2y3z4A5B6C7D8E9F0";
+        const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rcnh6emxrempnY3N3aHZmaG14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5Nzg0NzEsImV4cCI6MjAzMTU1NDQ3MX0.9mQ5vL8x2K3p4N6s7t8u9v0w1x2y3z4A5B6C7D8E9F0";
         
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const { createClient } = supabase;
+        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
         let allMembersData = [];
         let currentRole = '';
 
@@ -109,78 +115,186 @@
 
         document.getElementById('membershipForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const memberData = {
-                full_name: document.getElementById('fullName').value,
-                father_name: document.getElementById('fatherName').value,
-                caste: document.getElementById('caste').value,
-                cnic: document.getElementById('cnic').value,
-                phone_number: document.getElementById('phoneNumber').value,
-                school: document.getElementById('school').value,
-                semis_code: document.getElementById('semisCode').value,
-                taluka: document.getElementById('taluka').value,
-                address: document.getElementById('address').value,
-                joining_date: document.getElementById('joiningDate').value,
-                status: 'Pending'
-            };
-            const { error } = await _supabase.from('members').insert([memberData]);
-            document.getElementById('formMsg').textContent = error ? "Error: " + error.message : "Success! Registration submitted.";
-            if(!error) document.getElementById('membershipForm').reset();
+            const submitBtn = document.getElementById('submitBtn');
+            const formMsg = document.getElementById('formMsg');
+            submitBtn.disabled = true;
+            submitBtn.textContent = "Checking...";
+
+            const cnicVal = document.getElementById('cnic').value.trim();
+
+            try {
+                const { data: existingData, error: checkError } = await _supabase
+                    .from('members')
+                    .select('cnic')
+                    .eq('cnic', cnicVal);
+
+                if (checkError) {
+                    throw new Error("Database Table Error: " + checkError.message);
+                }
+
+                if (existingData && existingData.length > 0) {
+                    formMsg.textContent = "Error: This CNIC is already registered!";
+                    formMsg.className = "mt-4 text-center font-medium text-red-600";
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "Submit Registration";
+                    return;
+                }
+
+                submitBtn.textContent = "Submitting...";
+
+                const memberData = {
+                    full_name: document.getElementById('fullName').value,
+                    father_name: document.getElementById('fatherName').value,
+                    caste: document.getElementById('caste').value,
+                    cnic: cnicVal,
+                    phone_number: document.getElementById('phoneNumber').value,
+                    school: document.getElementById('school').value,
+                    semis_code: document.getElementById('semisCode').value,
+                    taluka: document.getElementById('taluka').value,
+                    address: document.getElementById('address').value,
+                    joining_date: document.getElementById('joiningDate').value,
+                    status: 'Pending'
+                };
+
+                const { error } = await _supabase.from('members').insert([memberData]);
+                if (error) throw new Error(error.message);
+
+                formMsg.textContent = "Success! Registration submitted (Status: Pending).";
+                formMsg.className = "mt-4 text-center font-medium text-emerald-600";
+                document.getElementById('membershipForm').reset();
+            } catch (err) {
+                formMsg.textContent = "Error: " + err.message;
+                formMsg.className = "mt-4 text-center font-medium text-red-600";
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = "Submit Registration";
+            }
         });
 
-        async function checkAdminLogin() {
-            const pass = document.getElementById('adminPass').value;
-            if(pass === 'owner123') { currentRole = 'owner'; initPanel(); }
-            else if(pass === 'admin123') { currentRole = 'admin'; initPanel(); }
-            else document.getElementById('loginError').textContent = "Invalid Password!";
+        async function checkMemberStatus() {
+            const queryVal = document.getElementById('checkInput').value.trim();
+            const resBox = document.getElementById('statusResult');
+            if(!queryVal) {
+                resBox.textContent = "Please enter CNIC or Phone Number.";
+                resBox.className = "mt-4 p-3 rounded-lg text-center bg-red-100 text-red-700";
+                return;
+            }
+
+            try {
+                const { data, error } = await _supabase
+                    .from('members')
+                    .select('*')
+                    .or(`cnic.eq.${queryVal},phone_number.eq.${queryVal}`);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    resBox.textContent = "No record found.";
+                    resBox.className = "mt-4 p-3 rounded-lg text-center bg-amber-100 text-amber-800";
+                } else {
+                    const m = data[0];
+                    let statusColor = 'bg-amber-100 text-amber-800';
+                    if(m.status === 'Approved') statusColor = 'bg-emerald-100 text-emerald-800';
+                    if(m.status === 'Rejected') statusColor = 'bg-red-100 text-red-800';
+
+                    resBox.innerHTML = `<b>Name:</b> ${m.full_name}<br><b>Status:</b> <span class="px-2 py-0.5 rounded font-bold ${statusColor}">${m.status}</span>`;
+                    resBox.className = "mt-4 p-3 rounded-lg text-center border";
+                }
+            } catch (err) {
+                resBox.textContent = "Error: " + err.message;
+                resBox.className = "mt-4 p-3 rounded-lg text-center bg-red-100 text-red-700";
+            }
         }
 
-        function initPanel() {
+        async function checkAdminLogin() {
+            const pass = document.getElementById('adminPass').value.trim();
+            const errTag = document.getElementById('loginError');
+            
+            if(pass === 'ownerYTA') { 
+                currentRole = 'owner'; 
+                initPanel("Owner Panel (Full Control)"); 
+            } else if(pass === 'adminYTA') { 
+                currentRole = 'admin'; 
+                initPanel("Admin Panel (View & Approve Only)"); 
+            } else {
+                errTag.textContent = "Invalid Password!";
+            }
+        }
+
+        function initPanel(title) {
             document.getElementById('adminLoginBox').classList.add('hidden');
             document.getElementById('adminContent').classList.remove('hidden');
+            document.getElementById('userRoleBadge').textContent = title;
             loadMembers();
         }
 
         async function loadMembers() {
-            const { data } = await _supabase.from('members').select('*').order('created_at', { ascending: false });
-            allMembersData = data;
-            renderTable(data);
+            try {
+                const { data, error } = await _supabase.from('members').select('*').order('created_at', { ascending: false });
+                if (error) throw error;
+                allMembersData = data || [];
+                renderTable(allMembersData);
+            } catch (err) {
+                console.error(err);
+            }
         }
 
         function filterMembers() {
             const search = document.getElementById('searchInput').value.toLowerCase();
             const taluka = document.getElementById('talukaFilter').value;
-            const filtered = allMembersData.filter(m => 
-                (m.full_name.toLowerCase().includes(search) || m.cnic.includes(search)) && 
-                (taluka === "" || m.taluka === taluka)
-            );
+            const filtered = allMembersData.filter(m => {
+                const name = (m.full_name || '').toLowerCase();
+                const cnic = (m.cnic || '').toLowerCase();
+                const tal = (m.taluka || '').toLowerCase();
+                return (name.includes(search) || cnic.includes(search) || tal.includes(search)) && 
+                       (taluka === "" || m.taluka === taluka);
+            });
             renderTable(filtered);
         }
 
         function renderTable(data) {
             const tbody = document.getElementById('membersTableBody');
+            document.getElementById('recordCount').textContent = `Total Records: ${data.length}`;
+            
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-3 text-center text-slate-500">No records found.</td></tr>`;
+                return;
+            }
+
             tbody.innerHTML = data.map(m => `
                 <tr>
-                    <td class="p-2">${m.full_name}<br><small>${m.father_name}</small></td>
-                    <td class="p-2">${m.caste}<br><small>${m.cnic}</small></td>
+                    <td class="p-2">${m.full_name}<br><small class="text-slate-500">${m.father_name}</small></td>
+                    <td class="p-2">${m.caste}<br><small class="text-slate-500">${m.cnic}</small></td>
                     <td class="p-2">${m.phone_number}<br><small class="text-emerald-700 font-bold">${m.taluka}</small></td>
-                    <td class="p-2"><span class="px-2 py-1 bg-slate-200 rounded text-xs">${m.status}</span></td>
+                    <td class="p-2"><span class="px-2 py-1 bg-slate-200 rounded text-xs font-bold">${m.status}</span></td>
                     <td class="p-2">
-                        <button onclick="updateStatus('${m.id}', 'Approved')" class="text-emerald-600 font-bold">Approve</button>
-                        ${currentRole === 'owner' ? `<button onclick="deleteMember('${m.id}')" class="text-red-600 font-bold ml-2">Delete</button>` : ''}
+                        <button onclick="updateStatus('${m.id}', 'Approved')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs">Approve</button>
+                        <button onclick="updateStatus('${m.id}', 'Rejected')" class="bg-red-600 text-white px-2 py-1 rounded text-xs ml-1">Reject</button>
+                        ${currentRole === 'owner' ? `<button onclick="deleteMember('${m.id}')" class="bg-slate-700 text-white px-2 py-1 rounded text-xs mt-1 block">Delete</button>` : ''}
                     </td>
                 </tr>
             `).join('');
         }
 
         async function updateStatus(id, status) {
-            await _supabase.from('members').update({ status: status }).eq('id', id);
-            loadMembers();
+            try {
+                const { error } = await _supabase.from('members').update({ status: status }).eq('id', id);
+                if (error) throw error;
+                loadMembers();
+            } catch (err) {
+                alert("Error updating status: " + err.message);
+            }
         }
 
         async function deleteMember(id) {
-            if(confirm("Delete this member?")) {
-                await _supabase.from('members').delete().eq('id', id);
-                loadMembers();
+            if(confirm("Are you sure you want to delete this record?")) {
+                try {
+                    const { error } = await _supabase.from('members').delete().eq('id', id);
+                    if (error) throw error;
+                    loadMembers();
+                } catch (err) {
+                    alert("Error deleting record: " + err.message);
+                }
             }
         }
     </script>
