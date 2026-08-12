@@ -95,11 +95,12 @@
     </main>
 
     <script>
+        // Supabase Project Credentials
         const SUPABASE_URL = "https://mkrbxzlkzjgcswhvfhmx.supabase.co";
         const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rcnh6emxrempnY3N3aHZmaG14Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MTU5Nzg0NzEsImV4cCI6MjAzMTU1NDQ3MX0.9mQ5vL8x2K3p4N6s7t8u9v0w1x2y3z4A5B6C7D8E9F0";
         
-        const { createClient } = supabase;
-        const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+        // Initialize Supabase Client safely using window.supabase
+        const _supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
         let allMembersData = [];
         let currentRole = '';
@@ -129,7 +130,7 @@
                     .eq('cnic', cnicVal);
 
                 if (checkError) {
-                    throw new Error("Database Table Error: " + checkError.message);
+                    throw new Error("Database Connection Error: " + checkError.message);
                 }
 
                 if (existingData && existingData.length > 0) {
