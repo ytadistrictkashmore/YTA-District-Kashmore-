@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>YTA District Kashmore - Digital Membership App</title>
+    <title>YTA District Kashmore - Digital Membership System</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Supabase JS Client CDN -->
@@ -15,58 +15,108 @@
 <body class="bg-slate-50 text-slate-800 min-h-screen flex flex-col justify-between">
 
     <!-- Header Section -->
-    <header class="bg-emerald-700 text-white shadow-md py-4 px-6 text-center">
-        <h1 class="text-2xl font-bold">يٿا ضلع ڪشمور (YTA District Kashmore)</h1>
-        <p class="text-sm mt-1 text-emerald-100">ڊجيٽل ممبرشمپ ۽ رجسٽريشن سسٽم</p>
+    <header class="bg-emerald-700 text-white shadow-md py-4 px-4 text-center">
+        <h1 class="text-xl sm:text-2xl font-bold tracking-wide">Young Teachers Alliance District Kashmore</h1>
+        <p class="text-xs sm:text-sm mt-1 text-emerald-100">Digital Membership System</p>
+        <p class="text-xs mt-1 text-emerald-200">Created by Nasar Bazed Dahani</p>
     </header>
 
     <!-- Main Container -->
-    <main class="container mx-auto px-4 py-8 max-w-xl flex-grow">
+    <main class="container mx-auto px-4 py-6 max-w-3xl flex-grow">
         
-        <!-- Registration Form Card -->
-        <div id="form-card" class="bg-white rounded-xl shadow-lg p-6 mb-6 border border-slate-100">
-            <h2 class="text-xl font-semibold mb-4 text-emerald-800 border-b pb-2">نئون ممبر فارم</h2>
+        <!-- Tabs for User / Admin / Owner -->
+        <div class="flex justify-center mb-6 border-b pb-2 space-x-2 space-x-reverse text-sm">
+            <button onclick="switchTab('formTab')" id="btnFormTab" class="px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium shadow">رجسٽريشن فارم</button>
+            <button onclick="switchTab('statusTab')" id="btnStatusTab" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium">اسٽيٽس چيڪ ڪريو</button>
+            <button onclick="switchTab('adminTab')" id="btnAdminTab" class="px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium">ايڊمن / اوونر پينل</button>
+        </div>
+
+        <!-- 1. Registration Form Section -->
+        <div id="sectionForm" class="bg-white rounded-xl shadow-lg p-5 sm:p-6 mb-6 border border-slate-100">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-emerald-800 border-b pb-2 text-right">نئون ممبر رجسٽريشن فارم</h2>
             
             <form id="membershipForm" class="space-y-4">
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">پورو نالو (Full Name)</label>
-                    <input type="text" id="fullName" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Full Name (پورو نالو)</label>
+                    <input type="text" id="fullName" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">والد جو نالو (Father's Name)</label>
-                    <input type="text" id="fatherName" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Father's / Husband Name (والد يا مڙس جو نالو)</label>
+                    <input type="text" id="fatherName" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">فون نمبر (Phone Number)</label>
-                    <input type="tel" id="phoneNumber" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Caste (জাতি - e.g. Dahani, Khoso, Mazari, Soomro)</label>
+                    <input type="text" id="caste" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
                 </div>
 
                 <div>
-                    <label class="block text-sm font-medium text-slate-700 mb-1">علاقو / ٽائون (Area / Town)</label>
-                    <input type="text" id="area" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">CNIC Number (شناختی ڪارڊ نمبر)</label>
+                    <input type="text" id="cnic" placeholder="41201-1234567-1" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Mobile Number (فون نمبر)</label>
+                    <input type="tel" id="phoneNumber" placeholder="03001234567" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">School (اسڪول جو نالو)</label>
+                    <input type="text" id="school" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">SEMIS Code (سيمس ڪوڊ)</label>
+                    <input type="text" id="semisCode" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Taluka (تعلقو)</label>
+                    <select id="taluka" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right bg-white">
+                        <option value="">تعلقو چونڊيو</option>
+                        <option value="Tangwani">Tangwani (ٽنگوانی)</option>
+                        <option value="Kashmore">Kashmore (ڪشمور)</option>
+                        <option value="Kandhkot">Kandhkot (ڪنڌڪوٽ)</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Address (پتو)</label>
+                    <input type="text" id="address" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-700 mb-1 text-right">Joining Date (نوڪري شروعات تاريخ)</label>
+                    <input type="date" id="joiningDate" required class="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500 text-right">
                 </div>
 
                 <button type="submit" id="submitBtn" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-medium py-2.5 rounded-lg transition duration-200 shadow">
-                    رجسٽر ڪريو
+                    رجسٽر ڪريو (Submit)
                 </button>
             </form>
             <div id="formMsg" class="mt-4 text-center text-sm font-medium"></div>
         </div>
 
-        <!-- Admin Login Link / Section -->
-        <div class="text-center">
-            <button onclick="toggleAdminPanel()" class="text-xs text-emerald-700 hover:underline font-medium">
-                انتظاميہ لاگ ان (Admin Panel)
-            </button>
+        <!-- 2. Check Status Section -->
+        <div id="sectionStatus" class="hidden bg-white rounded-xl shadow-lg p-5 sm:p-6 mb-6 border border-slate-100">
+            <h2 class="text-lg sm:text-xl font-semibold mb-4 text-emerald-800 border-b pb-2 text-right">پنهنجو ممبرشپ اسٽيٽس چيڪ ڪريو</h2>
+            <div class="space-y-3">
+                <label class="block text-sm font-medium text-slate-700 text-right">پنهنجو CNIC يا فون نمبر داخل ڪريو</label>
+                <input type="text" id="checkInput" placeholder="CNIC ya Phone Number" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-right focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <button onclick="checkMemberStatus()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-medium py-2 rounded-lg transition duration-200">
+                    اسٽيٽس معلوم ڪريو
+                </button>
+            </div>
+            <div id="statusResult" class="mt-4 p-3 rounded-lg text-center text-sm"></div>
         </div>
 
-        <!-- Admin Dashboard (Hidden by default) -->
-        <div id="adminPanel" class="hidden mt-6 bg-white rounded-xl shadow-lg p-6 border border-slate-100">
-            <h3 class="text-lg font-semibold mb-4 text-slate-800 border-b pb-2">ايڊمن ڊيش بورڊ</h3>
+        <!-- 3. Admin & Owner Panel Section -->
+        <div id="sectionAdmin" class="hidden bg-white rounded-xl shadow-lg p-5 sm:p-6 border border-slate-100">
+            <h3 class="text-base sm:text-lg font-semibold mb-4 text-slate-800 border-b pb-2 text-right">ايڊمن / اوونر پينل</h3>
+            
             <div id="adminLoginBox">
-                <input type="password" id="adminPass" placeholder="ايڊمن پاسورڊ داخل ڪريو" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3 text-sm focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <input type="password" id="adminPass" placeholder="پاسورڊ داخل ڪريو (Admin / Owner)" class="w-full px-3 py-2 border border-slate-300 rounded-lg mb-3 text-sm text-right focus:outline-none focus:ring-2 focus:ring-emerald-500">
                 <button onclick="checkAdminLogin()" class="w-full bg-slate-800 hover:bg-slate-900 text-white text-sm font-medium py-2 rounded-lg transition duration-200">
                     لاگ ان ٿيو
                 </button>
@@ -74,18 +124,37 @@
             </div>
 
             <div id="adminContent" class="hidden">
-                <div class="flex justify-between items-center mb-3">
-                    <span class="text-xs font-bold text-emerald-700">سڀ رجسٽرڊ ممبر</span>
-                    <button onclick="loadMembers()" class="text-xs bg-slate-100 hover:bg-slate-200 px-2 py-1 rounded text-slate-700">ريفرش ڪريو</button>
+                <!-- Search and Filter Controls -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-4">
+                    <div>
+                        <input type="text" id="searchInput" onkeyup="filterMembers()" placeholder="نالو، CNIC يا تعلقي ذريعي ڳوليو..." class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-right focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    </div>
+                    <div class="flex gap-2">
+                        <select id="talukaFilter" onchange="filterMembers()" class="w-full px-3 py-2 border border-slate-300 rounded-lg text-xs text-right bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                            <option value="">سڀ تعلقا (All Talukas)</option>
+                            <option value="Tangwani">Tangwani</option>
+                            <option value="Kashmore">Kashmore</option>
+                            <option value="Kandhkot">Kandhkot</option>
+                        </select>
+                        <button onclick="loadAllMembers()" class="bg-slate-100 hover:bg-slate-200 px-3 py-2 rounded text-xs text-slate-700 whitespace-nowrap">ريفرش</button>
+                    </div>
                 </div>
-                <div class="overflow-x-auto max-h-60 border rounded-lg">
+
+                <div class="flex justify-between items-center mb-2">
+                    <span id="userRoleBadge" class="text-xs font-bold px-2 py-1 bg-emerald-100 text-emerald-800 rounded"></span>
+                    <span id="recordCount" class="text-xs text-slate-500"></span>
+                </div>
+
+                <div class="overflow-x-auto max-h-96 border rounded-lg">
                     <table class="w-full text-right text-xs">
-                        <thead class="bg-slate-100 text-slate-700 border-b">
+                        <thead class="bg-slate-100 text-slate-700 border-b sticky top-0">
                             <tr>
-                                <th class="p-2">نالو</th>
-                                <th class="p-2">والد جو نالو</th>
-                                <th class="p-2">فون نمبر</th>
-                                <th class="p-2">علاقو</th>
+                                <th class="p-2">نالو / والد</th>
+                                <th class="p-2">জাতি / CNIC</th>
+                                <th class="p-2">فون / تعلقو</th>
+                                <th class="p-2">اسڪول / سيمس</th>
+                                <th class="p-2">اسٽيٽس</th>
+                                <th class="p-2">ايڪشن</th>
                             </tr>
                         </thead>
                         <tbody id="membersTableBody" class="divide-y divide-slate-100">
@@ -100,19 +169,41 @@
 
     <!-- Footer -->
     <footer class="bg-slate-800 text-slate-400 text-center py-4 text-xs">
-        <p>&copy; 2026 YTA District Kashmore. All rights reserved.</p>
+        <p>&copy; 2026 Young Teachers Alliance District Kashmore. Created by Nasar Bazed Dahani.</p>
     </footer>
 
-    <!-- Supabase Integration & Logic Script -->
+    <!-- Supabase Integration Script -->
     <script>
-        // Supabase Configuration
         const SUPABASE_URL = "https://mkrbxzlkzjgcswhvfhmx.supabase.co";
         const SUPABASE_ANON_KEY = "Sb_publishable_ZtcYI-EkbOvP1DKbmZDILA_vTmEBeLf";
         
         const { createClient } = supabase;
         const _supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-        // Form Submission Logic
+        let currentRole = '';
+        let allMembersData = []; // Store data locally for fast searching/filtering
+
+        function switchTab(tab) {
+            document.getElementById('sectionForm').classList.add('hidden');
+            document.getElementById('sectionStatus').classList.add('hidden');
+            document.getElementById('sectionAdmin').classList.add('hidden');
+            
+            document.getElementById('btnFormTab').className = "px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium";
+            document.getElementById('btnStatusTab').className = "px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium";
+            document.getElementById('btnAdminTab').className = "px-4 py-2 bg-slate-200 text-slate-700 rounded-lg font-medium";
+
+            if(tab === 'formTab') {
+                document.getElementById('sectionForm').classList.remove('hidden');
+                document.getElementById('btnFormTab').className = "px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium shadow";
+            } else if(tab === 'statusTab') {
+                document.getElementById('sectionStatus').classList.remove('hidden');
+                document.getElementById('btnStatusTab').className = "px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium shadow";
+            } else if(tab === 'adminTab') {
+                document.getElementById('sectionAdmin').classList.remove('hidden');
+                document.getElementById('btnAdminTab').className = "px-4 py-2 bg-emerald-600 text-white rounded-lg font-medium shadow";
+            }
+        }
+
         const form = document.getElementById('membershipForm');
         const submitBtn = document.getElementById('submitBtn');
         const formMsg = document.getElementById('formMsg');
@@ -120,22 +211,47 @@
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
             submitBtn.disabled = true;
-            submitBtn.textContent = "جمع ٿي رهيو آهي...";
+            submitBtn.textContent = "چيڪ ڪيو پيو وڃي...";
             formMsg.textContent = "";
 
-            const fullName = document.getElementById('fullName').value;
-            const fatherName = document.getElementById('fatherName').value;
-            const phoneNumber = document.getElementById('phoneNumber').value;
-            const area = document.getElementById('area').value;
+            const cnicVal = document.getElementById('cnic').value.trim();
 
             try {
-                const { data, error } = await _supabase
-                    .from('members') // Apni Supabase table ka naam yahan 'members' hona chahiye
-                    .insert([{ full_name: fullName, father_name: fatherName, phone_number: phoneNumber, area: area }]);
+                const { data: existingData, error: checkError } = await _supabase
+                    .from('members')
+                    .select('cnic')
+                    .eq('cnic', cnicVal);
 
-                if (error) throw error;
+                if (checkError) throw checkError;
 
-                formMsg.textContent = "مبارڪ ہو! اوھان جو فارم ڪاميابيءَ سان جمع ٿي ويو آهي.";
+                if (existingData && existingData.length > 0) {
+                    formMsg.textContent = "توهان جو CNIC پهريان ئي رجسٽرڊ آهي! (Already used)";
+                    formMsg.className = "mt-4 text-center text-sm font-medium text-red-600";
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = "رجسٽر ڪريو (Submit)";
+                    return;
+                }
+
+                submitBtn.textContent = "جمع ٿي رهيو آهي...";
+
+                const memberData = {
+                    full_name: document.getElementById('fullName').value,
+                    father_name: document.getElementById('fatherName').value,
+                    caste: document.getElementById('caste').value,
+                    cnic: cnicVal,
+                    phone_number: document.getElementById('phoneNumber').value,
+                    school: document.getElementById('school').value,
+                    semis_code: document.getElementById('semisCode').value,
+                    taluka: document.getElementById('taluka').value,
+                    address: document.getElementById('address').value,
+                    joining_date: document.getElementById('joiningDate').value,
+                    status: 'Pending'
+                };
+
+                const { error: insertError } = await _supabase.from('members').insert([memberData]);
+                if (insertError) throw insertError;
+
+                formMsg.textContent = "مبارڪ ہو! اوھان جو فارم ڪاميابيءَ سان جمع ٿي ويو آهي. فی الحال اوھان جو اسٽيٽس 'Pending' آهي.";
                 formMsg.className = "mt-4 text-center text-sm font-medium text-emerald-600";
                 form.reset();
             } catch (err) {
@@ -143,32 +259,73 @@
                 formMsg.className = "mt-4 text-center text-sm font-medium text-red-600";
             } finally {
                 submitBtn.disabled = false;
-                submitBtn.textContent = "رجسٽر ڪريو";
+                submitBtn.textContent = "رجسٽر ڪريو (Submit)";
             }
         });
 
-        // Admin Panel Toggle & Auth
-        function toggleAdminPanel() {
-            const panel = document.getElementById('adminPanel');
-            panel.classList.toggle('hidden');
-        }
+        async function checkMemberStatus() {
+            const queryVal = document.getElementById('checkInput').value.trim();
+            const resBox = document.getElementById('statusResult');
+            if(!queryVal) {
+                resBox.textContent = "مهرباني ڪري CNIC يا فون نمبر داخل ڪريو.";
+                resBox.className = "mt-4 p-3 rounded-lg text-center text-sm bg-red-100 text-red-700";
+                return;
+            }
 
-        function checkAdminLogin() {
-            const pass = document.getElementById('adminPass').value;
-            // Aap apna admin password yahan change kar sakte hain (filhal 'admin123' rakha hai)
-            if (pass === 'admin123') {
-                document.getElementById('adminLoginBox').classList.add('hidden');
-                document.getElementById('adminContent').classList.remove('hidden');
-                loadMembers();
-            } else {
-                document.getElementById('loginError').textContent = "गलत پاسورڊ!";
+            resBox.textContent = "چيڪ ڪيو پيو وڃي...";
+            resBox.className = "mt-4 p-3 rounded-lg text-center text-sm bg-slate-100 text-slate-700";
+
+            try {
+                const { data, error } = await _supabase
+                    .from('members')
+                    .select('*')
+                    .or(`cnic.eq.${queryVal},phone_number.eq.${queryVal}`);
+
+                if (error) throw error;
+
+                if (!data || data.length === 0) {
+                    resBox.textContent = "ڪو به رڪارڊ نه مليو. مهرباني ڪري صحيح نمبر يا CNIC لکو.";
+                    resBox.className = "mt-4 p-3 rounded-lg text-center text-sm bg-amber-100 text-amber-800";
+                } else {
+                    const m = data[0];
+                    let statusColor = 'bg-amber-100 text-amber-800';
+                    if(m.status === 'Approved') statusColor = 'bg-emerald-100 text-emerald-800';
+                    if(m.status === 'Rejected') statusColor = 'bg-red-100 text-red-800';
+
+                    resBox.innerHTML = `<b>نالو:</b> ${m.full_name}<br><b>اسٽيٽس:</b> <span class="px-2 py-0.5 rounded font-bold ${statusColor}">${m.status}</span>`;
+                    resBox.className = "mt-4 p-3 rounded-lg text-center text-sm border";
+                }
+            } catch (err) {
+                resBox.textContent = "خرابي پيش آئي: " + err.message;
+                resBox.className = "mt-4 p-3 rounded-lg text-center text-sm bg-red-100 text-red-700";
             }
         }
 
-        // Load Members from Supabase
-        async function loadMembers() {
+        function checkAdminLogin() {
+            const pass = document.getElementById('adminPass').value.trim();
+            const errTag = document.getElementById('loginError');
+            
+            if (pass === 'owner123') {
+                currentRole = 'owner';
+                initPanelSession("Owner Panel (مڪمل ڪنٽرول)");
+            } else if (pass === 'admin123') {
+                currentRole = 'admin';
+                initPanelSession("Admin Panel (صرف ڏسڻ ۽ اپروو ڪرڻ)");
+            } else {
+                errTag.textContent = "गलत پاسورڊ!";
+            }
+        }
+
+        function initPanelSession(roleTitle) {
+            document.getElementById('adminLoginBox').classList.add('hidden');
+            document.getElementById('adminContent').classList.remove('hidden');
+            document.getElementById('userRoleBadge').textContent = roleTitle;
+            loadAllMembers();
+        }
+
+        async function loadAllMembers() {
             const tbody = document.getElementById('membersTableBody');
-            tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">لوڊ ٿي رهيو آهي...</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-slate-500">لوڊ ٿي رهيو آهي...</td></tr>`;
 
             try {
                 const { data, error } = await _supabase
@@ -178,23 +335,105 @@
 
                 if (error) throw error;
 
-                if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-slate-500">ڪو به رڪارڊ موجود ناهي.</td></tr>`;
-                    return;
+                allMembersData = data || [];
+                renderTable(allMembersData);
+            } catch (err) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-red-500">ڊيٽا لوڊ ڪرڻ ۾ غلطي ٿي.</td></tr>`;
+            }
+        }
+
+        // Render Table and handle Search/Filter
+        function filterMembers() {
+            const searchKeyword = document.getElementById('searchInput').value.toLowerCase();
+            const selectedTaluka = document.getElementById('talukaFilter').value;
+
+            const filtered = allMembersData.filter(m => {
+                const name = (m.full_name || '').toLowerCase();
+                const cnic = (m.cnic || '').toLowerCase();
+                const taluka = (m.taluka || '').toLowerCase();
+
+                const matchesSearch = name.includes(searchKeyword) || cnic.includes(searchKeyword) || taluka.includes(searchKeyword);
+                const matchesTaluka = selectedTaluka === "" || m.taluka === selectedTaluka;
+
+                return matchesSearch && matchesTaluka;
+            });
+
+            renderTable(filtered);
+        }
+
+        function renderTable(dataArray) {
+            const tbody = document.getElementById('membersTableBody');
+            document.getElementById('recordCount').textContent = `كل رڪارڊ: ${dataArray.length}`;
+
+            if (dataArray.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-3 text-center text-slate-500">ڪو به رڪارڊ موجود ناهي.</td></tr>`;
+                return;
+            }
+
+            tbody.innerHTML = '';
+            dataArray.forEach(m => {
+                let statusBadge = `<span class="px-2 py-0.5 rounded bg-amber-100 text-amber-800 font-bold">${m.status}</span>`;
+                if(m.status === 'Approved') statusBadge = `<span class="px-2 py-0.5 rounded bg-emerald-100 text-emerald-800 font-bold">Approved</span>`;
+                if(m.status === 'Rejected') statusBadge = `<span class="px-2 py-0.5 rounded bg-red-100 text-red-800 font-bold">Rejected</span>`;
+
+                let actionBtns = `
+                    <button onclick="updateStatus('${m.id}', 'Approved')" class="bg-emerald-600 text-white px-2 py-1 rounded text-xs hover:bg-emerald-700">Approve</button>
+                    <button onclick="updateStatus('${m.id}', 'Rejected')" class="bg-red-600 text-white px-2 py-1 rounded text-xs hover:bg-red-700 mt-1">Reject</button>
+                `;
+
+                if(currentRole === 'owner') {
+                    actionBtns += `<button onclick="deleteMember('${m.id}')" class="bg-slate-700 text-white px-2 py-1 rounded text-xs hover:bg-slate-800 mt-1 block">Delete</button>`;
                 }
 
-                tbody.innerHTML = '';
-                data.forEach(m => {
-                    const row = `<tr>
-                        <td class="p-2">${m.full_name || ''}</td>
-                        <td class="p-2">${m.father_name || ''}</td>
-                        <td class="p-2">${m.phone_number || ''}</td>
-                        <td class="p-2">${m.area || ''}</td>
-                    </tr>`;
-                    tbody.innerHTML += row;
-                });
+                const row = `<tr>
+                    <td class="p-2">${m.full_name || ''}<br><span class="text-slate-400">والد: ${m.father_name || ''}</span></td>
+                    <td class="p-2">${m.caste || ''}<br><span class="text-slate-400">${m.cnic || ''}</span></td>
+                    <td class="p-2">${m.phone_number || ''}<br><span class="text-slate-400 font-semibold text-emerald-700">${m.taluka || ''}</span></td>
+                    <td class="p-2">${m.school || ''}<br><span class="text-slate-400">Semis: ${m.semis_code || ''}</span></td>
+                    <td class="p-2">${statusBadge}</td>
+                    <td class="p-2">${actionBtns}</td>
+                </tr>`;
+                tbody.innerHTML += row;
+            });
+        }
+
+        async function updateStatus(id, newStatus) {
+            try {
+                const { error } = await _supabase
+                    .from('members')
+                    .update({ status: newStatus })
+                    .eq('id', id);
+
+                if (error) throw error;
+                
+                // Update local array & re-filter
+                const member = allMembersData.find(m => m.id === id);
+                if(member) member.status = newStatus;
+                filterMembers();
             } catch (err) {
-                tbody.innerHTML = `<tr><td colspan="4" class="p-3 text-center text-red-500">ڊيٽا φلوڊ ڪرڻ ۾ غلطي ٿي.</td></tr>`;
+                alert("اسٽيٽس تبديل ڪرڻ ۾ غلطي: " + err.message);
+            }
+        }
+
+        async function deleteMember(id) {
+            if(currentRole !== 'owner') {
+                alert("صرف Owner ئي رڪارڊ ڊليٽ ڪري سگهي ٿو!");
+                return;
+            }
+            if(!confirm("ڇا توهان پڪ سان هي رڪارڊ ڊليٽ ڪرڻ چاهيو ٿا؟")) return;
+
+            try {
+                const { error } = await _supabase
+                    .from('members')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                allMembersData = allMembersData.filter(m => m.id !== id);
+                filterMembers();
+            } catch (err) {
+                alert("ڊليٽ ڪرڻ ۾ غلطي: " + err.message);
             }
         }
     </script>
