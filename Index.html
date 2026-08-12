@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Young Teachers Alliance (YTA) District Kashmore</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #eef2f5; margin: 0; padding: 20px 10px; }
+        .card { max-width: 500px; background: #ffffff; padding: 25px; border-radius: 12px; margin: 0 auto 25px auto; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .dashboard-card { max-width: 1100px; }
+        h2 { text-align: center; color: #1e3a8a; margin: 0 0 8px 0; font-size: 20px; font-weight: 700; line-height: 1.3; }
+        p.subtitle { text-align: center; color: #475569; font-size: 12px; line-height: 1.4; margin-bottom: 20px; }
+        .form-group { margin-bottom: 12px; }
+        label { display: block; font-size: 12px; font-weight: 600; color: #334155; margin-bottom: 4px; }
+        input, select { width: 100%; padding: 9px 11px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 13px; outline: none; background-color: #fff; }
+        input[type="file"] { padding: 6px; background-color: #f8fafc; }
+        .btn-submit { width: 100%; padding: 11px; background-color: #2563eb; color: #ffffff; border: none; border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-submit:hover { background-color: #1d4ed8; }
+        #statusMessage { margin-top: 12px; text-align: center; font-weight: bold; font-size: 13px; }
+        .dashboard-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .user-info { font-size: 13px; color: #334155; background: #f1f5f9; padding: 6px 12px; border-radius: 6px; font-weight: 600; }
+        .role-badge { background-color: #2563eb; color: white; padding: 2px 6px; border-radius: 4px; font-size: 11px; text-transform: uppercase; }
+        .role-owner { background-color: #7c3aed; }
+        .stats-summary { display: flex; gap: 10px; }
+        .stat-card { background: #f8fafc; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; color: #334155; }
+        .stat-card span { color: #2563eb; font-weight: bold; }
+        .controls { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .controls input { flex: 1; min-width: 200px; }
+        .table-responsive { overflow-x: auto; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        th, td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        th { background-color: #1e293b; color: #ffffff; font-weight: 600; white-space: nowrap; }
+        .member-img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 1px solid #cbd5e1; }
+        .badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; text-transform: uppercase; }
+        .badge-pending { background-color: #fef08a; color: #854d0e; }
+        .badge-approved { background-color: #bbf7d0; color: #166534; }
+        .badge-rejected { background-color: #fecaca; color: #991b1b; }
+        .btn-action { padding: 5px 8px; border: none; border-radius: 4px; cursor: pointer; font-size: 11px; font-weight: 600; }
+        .btn-approve { background-color: #16a34a; color: white; }
+        .btn-reject { background-color: #dc2626; color: white; }
+        .btn-remove { background-color: #e11d48; color: white; }
+        .owner-section { background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 15px; border-radius: 8px; margin-bottom: 25px; }
+        .footer-credit { text-align: center; margin-top: 18px; font-size: 11px; color: #64748b; font-weight: 600; border-top: 1px solid #cbd5e1; padding-top: 12px; }
+        .hidden { display: none !important; }
+    </style>
+</head>
+<body>
+
+<!-- SECTION 1: REGISTRATION FORM -->
+<div class="card" id="formSection">
+    <h2>Digital Membership of Young Teachers Alliance (YTA) District Kashmore</h2>
+    <p class="subtitle">Please enter accurate information to register your membership.</p>
+    
+    <form id="membershipForm">
+        <div class="form-group"><label>Passport Size Photo</label><input type="file" id="photo" accept="image/*" required></div>
+        <div class="form-group"><label>Full Name</label><input type="text" id="full_name" placeholder="Enter full name" required></div>
+        <div class="form-group"><label>Father/Husband Name</label><input type="text" id="father_name" placeholder="Enter father or husband name" required></div>
+        <div class="form-group"><label>Caste / Tribe</label><input type="text" id="caste" placeholder="e.g. Dahani, Mazari, Soomro" required></div>
+        <div class="form-group"><label>CNIC</label><input type="text" id="cnic" placeholder="XXXXX-XXXXXXX-X" required></div>
+        <div class="form-group"><label>Mobile Number</label><input type="tel" id="mobile" placeholder="0300-1234567" required></div>
+        <div class="form-group">
+            <label>Taluka</label>
+            <select id="taluka" required>
+                <option value="" disabled selected>Select Taluka</option>
+                <option value="Kashmore">Kashmore</option>
+                <option value="Kandhkot">Kandhkot</option>
+                <option value="Tangwani">Tangwani</option>
+            </select>
+        </div>
+        <div class="form-group"><label>School Name</label><input type="text" id="school_name" placeholder="Enter school name" required></div>
+        <div class="form-group"><label>SEMIS Code</label><input type="text" id="semis_code" placeholder="Enter SEMIS code" required></div>
+        <div class="form-group"><label>Designation & BPS</label><input type="text" id="designation" placeholder="e.g. JEST (BPS-14)" required></div>
+
+        <button type="submit" id="submitBtn" class="btn-submit">Submit Registration</button>
+    </form>
+    <div id="statusMessage"></div>
+    <div class="footer-credit">Created by Nasar Bazed Dahani</div>
+</div>
+
+<!-- SECTION 2: LOGIN PORTAL -->
+<div id="loginCard" class="card">
+    <h2>Admin & Owner Login</h2>
+    <p class="subtitle">Access member applications and administrative controls</p>
+    <form id="loginForm">
+        <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" required placeholder="admin@example.com"></div>
+        <div class="form-group"><label>Passcode / PIN</label><input type="password" id="loginPasscode" required placeholder="Enter Secret Code"></div>
+        <button type="submit" class="btn-submit">Login to Dashboard</button>
+    </form>
+    <div id="loginMsg" style="text-align: center; margin-top: 10px; color: red; font-size: 13px;"></div>
+</div>
+
+<!-- SECTION 3: MANAGEMENT DASHBOARD -->
+<div id="dashboardCard" class="card dashboard-card hidden">
+    <div class="dashboard-header">
+        <h2 style="text-align: left; margin:0;">Digital Management Portal</h2>
+        <div style="display: flex; gap: 15px; align-items: center;">
+            <div class="user-info">Logged in: <span id="currentUserName">User</span> <span id="currentUserRole" class="role-badge">Admin</span></div>
+            <button onclick="logout()" class="btn-action btn-reject" style="padding: 8px 12px;">Logout</button>
+        </div>
+    </div>
+    <div id="ownerPanel" class="owner-section hidden">
+        <h3>👑 Owner Control Panel (Manage Admins)</h3>
+        <form id="addAdminForm" class="admin-form" style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 15px;">
+            <input type="text" id="newAdminName" placeholder="Admin Name" required style="flex:1; min-width:150px;">
+            <input type="email" id="newAdminEmail" placeholder="Admin Email" required style="flex:1; min-width:150px;">
+            <input type="text" id="newAdminPasscode" placeholder="Passcode / PIN" required style="flex:1; min-width:150px;">
+            <button type="submit" class="btn-submit" style="width: auto; padding: 0 20px; margin-top: 0; background-color: #7c3aed;">Add New Admin</button>
+        </form>
+        <div class="table-responsive" style="max-height: 200px; overflow-y: auto;">
+            <table>
+                <thead><tr><th>Name</th><th>Email</th><th>Passcode</th><th>Role</th><th>Action</th></tr></thead>
+                <tbody id="adminUsersTable"></tbody>
+            </table>
+        </div>
+    </div>
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="margin:0; color:#1e3a8a;">Members Applications</h3>
+        <div class="stats-summary">
+            <div class="stat-card">Total: <span id="totalCount">0</span></div>
+            <div class="stat-card">Pending: <span id="pendingCount">0</span></div>
+        </div>
+    </div>
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="Search by Name, CNIC, Mobile..." onkeyup="filterMembers()">
+        <select id="statusFilter" onchange="filterMembers()" style="width: auto;">
+            <option value="all">All Statuses</option>
+            <option value="pending">Pending</option>
+            <option value="approved">Approved</option>
+            <option value="rejected">Rejected</option>
+        </select>
+    </div>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Photo</th><th>Full Name</th><th>Father Name</th><th>Caste</th><th>CNIC</th><th>Mobile</th><th>Taluka</th><th>School</th><th>Desig</th><th>Status</th><th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="membersTableBody"><tr><td colspan="11" style="text-align:center;">Loading...</td></tr></tbody>
+        </table>
+    </div>
+    <div class="footer-credit">Created by Nasar Bazed Dahani</div>
+</div>
+
+<script>
+    const SUPABASE_URL = "https://mkrbxzlkzjgcswhvfhmx.supabase.co";
+    const SUPABASE_ANON_KEY = "YAHAN_APNI_NEW_PROJECT_WALI_KEY_PASTE_KAREIN"; 
+    
+    const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+    const OWNER_CREDENTIALS = { email: "zainmeeeer@gmail.com", passcode: "owner@3484", name: "Zain Meer", role: "owner" };
+    let currentUser = null;
+    let allMembers = [];
+
+    document.getElementById('membershipForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        const statusMessage = document.getElementById('statusMessage');
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'Submitting...';
+        statusMessage.innerText = '';
+
+        try {
+            const photoFile = document.getElementById('photo').files[0];
+            let photoUrl = '';
+            if (photoFile) {
+                const fileName = `photos/${Date.now()}_${photoFile.name}`;
+                const { error: uploadErr } = await supabaseClient.storage.from('member-photos').upload(fileName, photoFile);
+                if (uploadErr) throw uploadErr;
+                const { data: urlData } = supabaseClient.storage.from('member-photos').getPublicUrl(fileName);
+                photoUrl = urlData.publicUrl;
+            }
+
+            const formData = {
+                full_name: document.getElementById('full_name').value.trim(),
+                father_name: document.getElementById('father_name').value.trim(),
+                caste: document.getElementById('caste').value.trim(),
+                cnic: document.getElementById('cnic').value.trim(),
+                mobile: document.getElementById('mobile').value.trim(),
+                taluka: document.getElementById('taluka').value,
+                school_name: document.getElementById('school_name').value.trim(),
+                semis_code: document.getElementById('semis_code').value.trim(),
+                designation: document.getElementById('designation').value.trim(),
+                photo_url: photoUrl,
+                status: 'pending'
+            };
+
+            const { error: insertError } = await supabaseClient.from('YTA District Kashmore Members').insert([formData]);
+            if (insertError) throw insertError;
+
+            statusMessage.style.color = '#16a34a';
+            statusMessage.innerText = 'Application successfully submitted!';
+            document.getElementById('membershipForm').reset();
+            if (currentUser) loadMembers();
+        } catch (err) {
+            statusMessage.style.color = '#dc2626';
+            statusMessage.innerText = 'Error: ' + (err.message || 'Unknown error');
+        }
+        submitBtn.disabled = false;
+        submitBtn.innerText = 'Submit Registration';
+    });
+
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const email = document.getElementById('loginEmail').value.trim();
+        const passcode = document.getElementById('loginPasscode').value.trim();
+        const msg = document.getElementById('loginMsg');
+        msg.innerText = 'Verifying...';
+
+        if (email.toLowerCase() === OWNER_CREDENTIALS.email.toLowerCase() && passcode === OWNER_CREDENTIALS.passcode) {
+            currentUser = OWNER_CREDENTIALS;
+        } else {
+            const { data } = await supabaseClient.from('admin_users').select('*').eq('email', email).eq('passcode', passcode).single();
+            if (data) currentUser = data;
+        }
+
+        if (!currentUser) { msg.innerText = 'Invalid Email or Passcode!'; return; }
+
+        document.getElementById('loginCard').classList.add('hidden');
+        document.getElementById('dashboardCard').classList.remove('hidden');
+        document.getElementById('currentUserName').innerText = currentUser.name;
+        const roleBadge = document.getElementById('currentUserRole');
+        roleBadge.innerText = currentUser.role;
+
+        if (currentUser.role === 'owner') {
+            roleBadge.classList.add('role-owner');
+            document.getElementById('ownerPanel').classList.remove('hidden');
+            loadAdmins();
+        }
+        loadMembers();
+    });
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('dashboardCard').classList.add('hidden');
+        document.getElementById('ownerPanel').classList.add('hidden');
+        document.getElementById('loginCard').classList.remove('hidden');
+        document.getElementById('loginForm').reset();
+    }
+
+    async function loadAdmins() {
+        const { data } = await supabaseClient.from('admin_users').select('*');
+        const tbody = document.getElementById('adminUsersTable');
+        tbody.innerHTML = `<tr><td><b>${OWNER_CREDENTIALS.name}</b></td><td>${OWNER_CREDENTIALS.email}</td><td><code>${OWNER_CREDENTIALS.passcode}</code></td><td><span class="role-badge role-owner">owner</span></td><td>-</td></tr>`;
+        if (data) {
+            data.forEach(u => {
+                tbody.innerHTML += `<tr><td><b>${u.name}</b></td><td>${u.email}</td><td><code>${u.passcode}</code></td><td><span class="role-badge">${u.role}</span></td><td><button class="btn-action btn-remove" onclick="removeAdmin(${u.id})">Remove</button></td></tr>`;
+            });
+        }
+    }
+
+    document.getElementById('addAdminForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        if (currentUser.role !== 'owner') return;
+        await supabaseClient.from('admin_users').insert([{
+            name: document.getElementById('newAdminName').value.trim(),
+            email: document.getElementById('newAdminEmail').value.trim(),
+            passcode: document.getElementById('newAdminPasscode').value.trim(),
+            role: 'admin'
+        }]);
+        document.getElementById('addAdminForm').reset();
+        loadAdmins();
+    });
+
+    async function removeAdmin(id) {
+        if (currentUser.role !== 'owner') return;
+        if (!confirm('Are you sure?')) return;
+        await supabaseClient.from('admin_users').delete().eq('id', id);
+        loadAdmins();
+    }
+
+    async function loadMembers() {
+        const { data } = await supabaseClient.from('YTA District Kashmore Members').select('*').order('id', { ascending: false });
+        if (data) { allMembers = data; updateStats(data); renderMembersTable(allMembers); }
+    }
+
+    function updateStats(members) {
+        document.getElementById('totalCount').innerText = members.length;
+        document.getElementById('pendingCount').innerText = members.filter(m => (m.status || 'pending') === 'pending').length;
+    }
+
+    function renderMembersTable(members) {
+        const tbody = document.getElementById('membersTableBody');
+        tbody.innerHTML = members.length === 0 ? '<tr><td colspan="11" style="text-align:center;">No records found.</td></tr>' : '';
+        members.forEach(m => {
+            tbody.innerHTML += `<tr>
+                <td><img src="${m.photo_url || 'https://via.placeholder.com/40'}" class="member-img"></td>
+                <td><b>${m.full_name || ''}</b></td>
+                <td>${m.father_name || ''}</td>
+                <td>${m.caste || ''}</td>
+                <td>${m.cnic || ''}</td>
+                <td>${m.mobile || ''}</td>
+                <td>${m.taluka || ''}</td>
+                <td>${m.school_name || ''}</td>
+                <td>${m.designation || ''}</td>
+                <td><span class="badge badge-${m.status || 'pending'}">${m.status || 'pending'}</span></td>
+                <td>
+                    <button class="btn-action btn-approve" onclick="updateStatus(${m.id}, 'approved')">Approve</button>
+                    <button class="btn-action btn-reject" onclick="updateStatus(${m.id}, 'rejected')">Reject</button>
+                </td>
+            </tr>`;
+        });
+    }
+
+    async function updateStatus(id, status) {
+        await supabaseClient.from('YTA District Kashmore Members').update({ status }).eq('id', id);
+        loadMembers();
+    }
+
+    function filterMembers() {
+        const val = document.getElementById('searchInput').value.toLowerCase();
+        const stat = document.getElementById('statusFilter').value;
+        renderMembersTable(allMembers.filter(m => {
+            const matchTxt = (m.full_name && m.full_name.toLowerCase().includes(val)) || (m.cnic && m.cnic.toLowerCase().includes(val)) || (m.mobile && m.mobile.toLowerCase().includes(val));
+            const matchStat = stat === 'all' || (m.status || 'pending') === stat;
+            return matchTxt && matchStat;
+        }));
+    }
+</script>
+
+</body>
+</html>
